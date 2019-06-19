@@ -11,7 +11,6 @@
  ✔️ Plugin Messaging System(soon)<br>
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
- ✔️ QueryUpdater<br>
  
 ## 📘 Commands:
 
@@ -20,8 +19,8 @@
 | **Name/Command** | **Usage** |  
 | --- | --- |  
 | **/sc** | **StaffChat control** <br><br> Usage: `/sc`, `/sc <message>` <br><br> Using only `/sc` you will turn force StaffChat on|off|. You can also use `!` or any presetted character before your message to send staff message. <br> Permission: `stargate.staffchat`
-| **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> These command will help you find players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
-| **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> These command will send you list of all online staff. <br> Permission: `stargate.staff`
+| **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> This command will help you find players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
+| **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> This command will send you list of all online staff. <br> Permission: `stargate.staff`
 
 ## 🔨 Config:  
 - Here you can change StaffChat caller
@@ -36,9 +35,5 @@ StaffChatCaller: "!"
 StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"    
 ...  
 ```  
-
-## :information_source: QueryUpdater
-> - Change players count (ex. 5/4)
-> - You are able to change query version
 ## 📋 Special Thanks To:
-Everyone who downloaded these plugin. To persons who inspiraded me to start these plugin. Thanks to You these project will be updated for long time
+Everyone who downloaded this plugin. To persons who inspiraded me to start this plugin. Thanks to You, this project will be updated for a long time
