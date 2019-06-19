@@ -11,6 +11,7 @@
  ✔️ Plugin Messaging System(soon)<br>
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
+ ✔️ QueryUpdater<br>
  
 ## 📘 Commands:
 
@@ -35,5 +36,9 @@ StaffChatCaller: "!"
 StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"    
 ...  
 ```  
+
+## :information_source: QueryUpdater
+> - Change players count (ex. 5/4)
+> - You are able to change query version
 ## 📋 Special Thanks To:
 Everyone who downloaded these plugin. To persons who inspiraded me to start these plugin. Thanks to You these project will be updated for long time
