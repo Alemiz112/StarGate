@@ -3,7 +3,6 @@
 
 Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 ## 🎯 Features:    
- <br><br>
  ✔️ StaffChat<br>
  ✔️ StaffFind/StaffList<br>
  ✔️ PlayerFind<br>
