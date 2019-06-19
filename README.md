@@ -19,7 +19,7 @@
 | **Name/Command** | **Usage** |  
 | --- | --- |  
 | **/sc** | **StaffChat control** <br><br> Usage: `/sc`, `/sc <message>` <br><br> Using only `/sc` you will turn force StaffChat on|off|. You can also use `!` or any presetted character before your message to send staff message. <br> Permission: `stargate.staffchat`
-| **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> This command will help you find players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
+| **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> This command will help you find a players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
 | **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> This command will send you list of all online staff. <br> Permission: `stargate.staff`
 
 ## 🔨 Config:  
