@@ -1,7 +1,7 @@
 # StarGate
 <a align="center" href="https://discord.gg/Fq8JWfB"><img src="https://discordapp.com/api/guilds/562263095888707614/embed.png" alt="Discord server"/></a>
+>Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 
-Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 ## 🎯 Features:    
  ✔️ StaffChat<br>
  ✔️ StaffFind/StaffList<br>
