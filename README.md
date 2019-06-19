@@ -1,23 +1,19 @@
 # StarGate
-<a align="center" href="https://discord.gg/tJ9wDRR"><img src="https://discordapp.com/api/guilds/524966029080920082/embed.png" alt="Discord server"/></a>
+<a align="center" href="https://discord.gg/Fq8JWfB"><img src="https://discordapp.com/api/guilds/562263095888707614/embed.png" alt="Discord server"/></a>
 
-<div align="center">
 Plugin made for WaterDog, awesome proxy for mcbe (latest version)
-    <h2>Features:</h2>
-</div>
-    
-<div>
+## 🎯 Features:    
  <br><br>
  ✔️ StaffChat<br>
  ✔️ StaffFind/StaffList<br>
  ✔️ PlayerFind<br>
   <br>
-<div align="center">
-    <h2>TODO:</h2>
-</div>
+## 📝 TODO:
  ✔️ Plugin Messaging System(soon)<br>
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
+ 
+## 📘 Commands:
 
 **StarGate Commands:**  
   
@@ -27,7 +23,7 @@ Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 | **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> These command will help you find players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
 | **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> These command will send you list of all online staff. <br> Permission: `stargate.staff`
 
-## Config  
+## 🔨 Config:  
 - Here you can change StaffChat caller
 - Default configuration:
 
@@ -40,4 +36,5 @@ StaffChatCaller: "!"
 StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"    
 ...  
 ```  
-<h2 algin="center">Credits</h2>
+## 📋 Special Thanks To:
+Everyone who downloaded these plugin. To persons who inspiraded me to start these plugin. Thanks to You these project will be updated for long time
