@@ -6,11 +6,13 @@
  ✔️ StaffChat<br>
  ✔️ StaffFind/StaffList<br>
  ✔️ PlayerFind<br>
+ ✔️ QueryUpdater<br>
   <br>
 ## 📝 TODO:
  ✔️ Plugin Messaging System(soon)<br>
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
+ 
  
 ## 📘 Commands:
 
