@@ -9,9 +9,10 @@
  ✔️ QueryUpdater<br>
   <br>
 ## 📝 TODO:
- ✔️ Plugin Messaging System(soon)<br>
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
+## 🔧 DEV Only:
+ ✔️ Plugin Messaging System(not done yet)<br>
  
  
 ## 📘 Commands:
