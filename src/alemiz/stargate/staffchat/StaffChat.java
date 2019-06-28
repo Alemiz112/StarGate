@@ -1,12 +1,14 @@
 package alemiz.stargate.staffchat;
 
 import alemiz.stargate.StarGate;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class StaffChat {
 
@@ -39,10 +41,16 @@ public class StaffChat {
 
         String finalMessage = this.plugin.colorText(format);
 
-        for (ProxiedPlayer member : players){
+        Logger logger = plugin.getLogger();
+        for (ProxiedPlayer member : players) {
+            logger.info("§cName :"+ member.getName());
+
             if (player.hasPermission("stargate.staffchat")){
                 member.sendMessage(new TextComponent(finalMessage));
             }
+
+            String perm = player.hasPermission("stargate.staffchat") ? "yes" : "no";
+            logger.info("§aPerm :" + perm);
         }
     }
 

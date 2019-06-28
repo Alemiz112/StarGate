@@ -1,0 +1,176 @@
+package alemiz.stargate.gate;
+
+import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.events.CustomPacketEvent;
+import alemiz.stargate.gate.packets.Packets;
+import alemiz.stargate.gate.packets.PingPacket;
+import alemiz.stargate.gate.packets.StarGatePacket;
+import alemiz.stargate.gate.packets.WelcomePacket;
+import alemiz.stargate.untils.gateprotocol.Convertor;
+import net.md_5.bungee.api.ProxyServer;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Server {
+    protected StarGate plugin;
+
+    private static Server instance;
+    private static GateAPI gateAPI;
+
+    /**
+     * Settings of StarGate protocol, communication services and more
+     * These services are running on separated threads, so performance will not get DOWN
+     */
+    protected static int port = 47007;
+    protected static int maxConn = 50;
+
+
+    protected Map<String, Handler> clients = new HashMap<>();
+    protected Map<Integer, StarGatePacket> packets = new HashMap<>();
+
+    protected ExecutorService clientPool;
+    protected Thread serverThread;
+
+    public Server(StarGate plugin){
+        this.plugin = plugin;
+
+        gateAPI = new GateAPI(this);
+
+        initConfig();
+        initPackets();
+        start();
+    }
+
+    public static Server getInstance(){
+        return instance;
+    }
+
+    public void start(){
+        plugin.getLogger().info("§aStarting StarGate Protocol on Port: §2"+port);
+        clientPool = Executors.newFixedThreadPool(50);
+
+        Runnable serverTask = new Runnable(){
+            @Override
+            public void run() {
+                try (ServerSocket listener = new ServerSocket(47007)) {
+                    plugin.getLogger().info("§cDone! §aStarGate Protocol is successfully running. Waiting for clients...");
+
+                    while (true) {
+                        Handler client = new Handler(listener.accept());
+                        clientPool.execute(client);
+                    }
+                }catch (IOException e) {
+                    plugin.getLogger().info("§cERROR: Connection refused!\n§r" +e.getMessage());
+                }
+            }
+        };
+
+        /* Here we are creating new Thread for Server only
+        * Every client has its own Thread*/
+
+        serverThread = new Thread(serverTask);
+        serverThread.start();
+    }
+
+    /**
+     * Here we are registring new Packets, may be useful for DEV
+     * Every packet Extends @class StarGatePacket*/
+
+    private void initPackets(){
+        GateAPI.RegisterPacket(new WelcomePacket());
+        GateAPI.RegisterPacket(new PingPacket());
+    }
+
+    private void initConfig(){
+        port = plugin.cfg.getInt("StarGate.port");
+        maxConn = plugin.cfg.getInt("StarGate.maxConnections");
+    }
+
+    /* This function we use to send packet to Clients
+     * You must specify Client name or Chevron and packet that will be sent*/
+
+    protected void gatePacket(String client, StarGatePacket packet){
+        if (!clients.containsKey(client) || clients.get(client) == null) return;
+
+        Handler clientHandler = clients.get(client);
+        clientHandler.gatePacket(packet);
+    }
+
+    /* Using these function we can process packet from string to data
+    *  After packet is successfully created we can handle that Packet*/
+
+    protected boolean processPacket(String client, String packetString){
+        String[] data = Convertor.getPacketStringData(packetString);
+        int PacketId = Integer.decode(data[0]);
+
+        if (!packets.containsKey(PacketId) || packets.get(PacketId) == null) return false;
+
+        /* Here we decode Packet. Create from String Data*/
+        StarGatePacket packet = packets.get(PacketId);
+
+
+        /* Preprocessing official packets if its needed.
+        *  Great example is PingPacket - we receive NanoTime and converts it to Seconds */
+        switch (packet.getID()){
+            case Packets.PING_PACKET:
+                long actualTime = System.nanoTime();
+                long startTime = Long.decode(data[1]);
+
+                long ping = (actualTime-startTime) / 1_000_000_000;
+                data[1] = Long.toString(ping);
+
+                packet.encoded = Convertor.getPacketString(data);
+                break;
+            default:
+                packet.encoded = packetString;
+                break;
+        }
+
+        packet.decode();
+
+        handlePacket(client, packet);
+        return true;
+    }
+
+    private void handlePacket(String client, StarGatePacket packet){
+        int type = packet.getID();
+
+        switch (type){
+            case Packets.WELCOME_PACKET:
+                WelcomePacket welcomePacket = (WelcomePacket) packet;
+                plugin.getLogger().info("§bReceiving first data from §e"+welcomePacket.server);
+                plugin.getLogger().info("§bUSAGE: §e"+welcomePacket.usage+"%§b TPS: §e"+welcomePacket.tps+" §bPLAYERS: §e"+welcomePacket.players);
+                break;
+            case Packets.PING_PACKET:
+                PingPacket pingPacket = (PingPacket) packet;
+
+                if (pingPacket.getPing() > 30){
+                    Handler handler = clients.get(client);
+
+                    int ping = pingPacket.getPing();
+                    plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"s");
+
+                    if (handler.reconnect()){
+                        clients.remove(client);
+                    }
+                }else{
+                    int ping = pingPacket.getPing();
+                    plugin.getLogger().info("§bPING: §e"+ ping);
+                }
+                break;
+            default:
+                /** Here we call Event that will send packet to DEVs plugin*/
+                plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));
+                break;
+        }
+    }
+
+}
