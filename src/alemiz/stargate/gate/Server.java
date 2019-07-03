@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
     protected StarGate plugin;
@@ -118,13 +119,15 @@ public class Server {
 
 
         /* Preprocessing official packets if its needed.
-        *  Great example is PingPacket - we receive NanoTime and converts it to Seconds */
+        *  Great example is PingPacket - we receive NanoTime and converts it to MilliSeconds */
         switch (packet.getID()){
             case Packets.PING_PACKET:
                 long actualTime = System.nanoTime();
                 long startTime = Long.decode(data[1]);
 
-                long ping = (actualTime-startTime) / 1_000_000_000;
+                //long ping = (actualTime-startTime) / 1_000_000_000; Old Format
+
+                long ping = TimeUnit.MILLISECONDS.convert((actualTime-startTime), TimeUnit.NANOSECONDS);
                 data[1] = Long.toString(ping);
 
                 packet.encoded = Convertor.getPacketString(data);
