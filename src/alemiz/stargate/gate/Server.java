@@ -2,12 +2,11 @@ package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.events.CustomPacketEvent;
-import alemiz.stargate.gate.packets.Packets;
-import alemiz.stargate.gate.packets.PingPacket;
-import alemiz.stargate.gate.packets.StarGatePacket;
-import alemiz.stargate.gate.packets.WelcomePacket;
+import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.untils.gateprotocol.Convertor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -88,6 +87,7 @@ public class Server {
     private void initPackets(){
         GateAPI.RegisterPacket(new WelcomePacket());
         GateAPI.RegisterPacket(new PingPacket());
+        GateAPI.RegisterPacket(new PlayerTransferPacket());
     }
 
     private void initConfig(){
@@ -125,9 +125,9 @@ public class Server {
                 long actualTime = System.nanoTime();
                 long startTime = Long.decode(data[1]);
 
-                //long ping = (actualTime-startTime) / 1_000_000_000; Old Format
+                //long ping = (actualTime-startTime) / 1_000_000_000; => Old Format
+                long ping = TimeUnit.NANOSECONDS.toMillis((actualTime-startTime));
 
-                long ping = TimeUnit.MILLISECONDS.convert((actualTime-startTime), TimeUnit.NANOSECONDS);
                 data[1] = Long.toString(ping);
 
                 packet.encoded = Convertor.getPacketString(data);
@@ -154,20 +154,36 @@ public class Server {
                 break;
             case Packets.PING_PACKET:
                 PingPacket pingPacket = (PingPacket) packet;
+                long delay = TimeUnit.SECONDS.toMillis(30);
 
-                if (pingPacket.getPing() > 30){
+                if (pingPacket.getPing() > delay){
                     Handler handler = clients.get(client);
 
                     int ping = pingPacket.getPing();
-                    plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"s");
+                    plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
 
-                    if (handler.reconnect()){
-                        clients.remove(client);
+                    if (!handler.reconnect()){
+                        plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
+                        plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
                     }
+
+                    clients.remove(client);
                 }else{
                     int ping = pingPacket.getPing();
                     plugin.getLogger().info("§bPING: §e"+ ping);
                 }
+                break;
+            case Packets.PLAYER_TRANSFORM_PACKET:
+                PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;
+                ProxiedPlayer player = transferPacket.getPlayer();
+
+                if (player == null){
+                    plugin.getLogger().info("§cWARNING: §bTransfer Packet => Player not found!");
+                }else {
+                    ServerInfo server = plugin.getProxy().getServerInfo(transferPacket.getDestination());
+                    player.connect(server);
+                }
+
                 break;
             default:
                 /** Here we call Event that will send packet to DEVs plugin*/

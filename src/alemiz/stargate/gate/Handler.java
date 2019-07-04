@@ -94,10 +94,14 @@ class Handler implements Runnable {
         try {
             out.println("GATE_RECONNECT");
 
+            /* We give some small time for client to make him receive message
+            * and prepare for reconnecting*/
+            Thread.sleep(450);
+
             in.close();
             out.close();
             socket.close();
-        } catch(IOException e) {return  false; }
+        } catch(Exception e) {return  false;}
         return true;
     }
 
