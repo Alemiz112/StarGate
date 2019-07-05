@@ -1,5 +1,5 @@
 # StarGate
-<a align="center" href="https://discord.gg/Fq8JWfB"><img src="https://discordapp.com/api/guilds/562263095888707614/embed.png" alt="Discord server"/></a>
+<a align="center" href="https://discord.gg/Fq8JWfB"><img src="https://discordapp.com/api/guilds/562263095888707614/embed.png" alt="Discord server"/></a> [![Build Status](https://travis-ci.org/Alemiz112/StarGate.svg?branch=master)](https://travis-ci.org/Alemiz112/StarGate)
 >Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 
 ## 🎯 Features:    
