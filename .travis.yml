@@ -1,3 +1,4 @@
-sudo: required
 language: java
-install: ant deps
+install: true
+script:
+  - mvn clean
