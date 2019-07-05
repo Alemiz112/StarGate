@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="stargate_dev" default="all">
+  
+  
+  <property file="pom.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.klib"/>
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.waterdog.classpath">
+    <pathelement location="${basedir}/../Waterdog.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="forms-*.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module StarGate -->
+  
+  <dirname property="module.stargate.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.stargate" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.stargate" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.stargate" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.stargate" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="stargate.output.dir" value="${module.stargate.basedir}/out/production/StarGate"/>
+  <property name="stargate.testoutput.dir" value="${module.stargate.basedir}/out/test/StarGate"/>
+  
+  <path id="stargate.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="stargate.module.production.classpath">
+    <path refid="${module.jdk.classpath.stargate}"/>
+    <path refid="library.waterdog.classpath"/>
+  </path>
+  
+  <path id="stargate.runtime.production.module.classpath">
+    <pathelement location="${stargate.output.dir}"/>
+    <path refid="library.waterdog.classpath"/>
+  </path>
+  
+  <path id="stargate.module.classpath">
+    <path refid="${module.jdk.classpath.stargate}"/>
+    <pathelement location="${stargate.output.dir}"/>
+    <path refid="library.waterdog.classpath"/>
+  </path>
+  
+  <path id="stargate.runtime.module.classpath">
+    <pathelement location="${stargate.testoutput.dir}"/>
+    <pathelement location="${stargate.output.dir}"/>
+    <path refid="library.waterdog.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.stargate">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.stargate">
+    <patternset refid="excluded.from.module.stargate"/>
+  </patternset>
+  
+  <path id="stargate.module.sourcepath">
+    <dirset dir="${module.stargate.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.stargate" depends="compile.module.stargate.production,compile.module.stargate.tests" description="Compile module StarGate"/>
+  
+  <target name="compile.module.stargate.production" depends="register.custom.compilers" description="Compile module StarGate; production classes">
+    <mkdir dir="${stargate.output.dir}"/>
+    <javac2 destdir="${stargate.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.stargate}/javac">
+      <compilerarg line="${compiler.args.stargate}"/>
+      <bootclasspath refid="stargate.module.bootclasspath"/>
+      <classpath refid="stargate.module.production.classpath"/>
+      <src refid="stargate.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.stargate"/>
+    </javac2>
+    
+    <copy todir="${stargate.output.dir}">
+      <fileset dir="${module.stargate.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.stargate.tests" depends="register.custom.compilers,compile.module.stargate.production" description="compile module StarGate; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.stargate" description="cleanup module">
+    <delete dir="${stargate.output.dir}"/>
+    <delete dir="${stargate.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.stargate" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.stargate" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.stargate:jar" value="${basedir}/out/artifacts/StarGate_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.StarGate.jar" value="${artifacts.temp.dir}/StarGate.jar"/>
+  </target>
+  
+  <target name="artifact.stargate:jar" depends="init.artifacts, compile.module.stargate" description="Build &#39;StarGate:jar&#39; artifact">
+    <property name="artifact.temp.output.stargate:jar" value="${artifacts.temp.dir}/StarGate_jar"/>
+    <mkdir dir="${artifact.temp.output.stargate:jar}"/>
+    <jar destfile="${temp.jar.path.StarGate.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${stargate.output.dir}"/>
+      <zipfileset file="${basedir}/src/resources/plugin.yml"/>
+      <zipfileset file="${basedir}/src/resources/config.yml"/>
+    </jar>
+    <copy file="${temp.jar.path.StarGate.jar}" tofile="${artifact.temp.output.stargate:jar}/StarGate.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.stargate:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.stargate:jar}"/>
+    <copy todir="${artifact.output.stargate:jar}">
+      <fileset dir="${artifact.temp.output.stargate:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
