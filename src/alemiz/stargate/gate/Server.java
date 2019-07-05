@@ -3,6 +3,7 @@ package alemiz.stargate.gate;
 import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.events.CustomPacketEvent;
 import alemiz.stargate.gate.packets.*;
+import alemiz.stargate.gate.tasks.PingTask;
 import alemiz.stargate.untils.gateprotocol.Convertor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -78,6 +79,12 @@ public class Server {
 
         serverThread = new Thread(serverTask);
         serverThread.start();
+
+        /* Launching PingTask is very easy
+        * Just set delay (60seconds) and launch task*/
+        long interval = 60 * 1000;
+        Timer timer = new Timer();
+        timer.schedule(new PingTask(), 0, interval);
     }
 
     /**
@@ -192,4 +199,9 @@ public class Server {
         }
     }
 
+    /* Server Data*/
+
+    public Map<String, Handler> getClients() {
+        return clients;
+    }
 }

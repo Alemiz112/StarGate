@@ -35,4 +35,13 @@ public class GateAPI {
         }
     }
 
+    /*This function is for checking ping for every client
+    * It may be rewrite soon, so we can call it "deprecated" */
+    public static void pingAll(){
+        gateServer.clients.forEach((client, handler)->{
+            ping(client);
+        });
+        System.out.println("Ping ALL!");
+    }
+
 }
