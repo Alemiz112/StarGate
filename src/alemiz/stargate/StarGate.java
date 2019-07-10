@@ -22,7 +22,6 @@ import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.io.ByteStreams;
 import net.md_5.bungee.event.EventHandler;
@@ -96,11 +95,6 @@ public class StarGate extends Plugin implements Listener{
 
         ServerPing.Protocol prot = new ServerPing.Protocol("", ping.getVersion().getProtocol()); //NAME => MCPE Version
         ping.setVersion(prot);
-
-        /* MOTD Changer*/
-        List<String> list = cfg.getStringList("MOTD");
-        String modt = list.get(new Random().nextInt(list.size()));
-        ping.setDescription(modt);
 
         event.setResponse(ping);
     }
