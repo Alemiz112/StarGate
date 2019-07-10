@@ -7,6 +7,7 @@
  ✔️ StaffFind/StaffList<br>
  ✔️ PlayerFind<br>
  ✔️ QueryUpdater<br>
+ ✔️ MOTD Changer<br>
   <br>
 ## 📝 TODO:
  ✔️ API for PocketMine developers<br>
@@ -36,6 +37,16 @@ StaffChatCaller: "!"
 #StaffChat format
 #You can use: %player%, %message%, 
 StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"    
+#MOTD Changer Settings
+#You can set here unlimited amount of MOTDSs
+#Whithelist MOTD - coming soon
+WMOTD:
+  - "§6Server §7» §l§cWartung"
+  - "§6Server §7» §l§cOffline"
+#Normal non-whitelist MOTD
+MOTD:
+  - "Test"
+  - "Test1"
 ...  
 ```  
 ## 📋 Special Thanks To:
