@@ -6,3 +6,17 @@ StaffChatCaller: "!"
 #StaffChat format
 #You can use: %player%, %message%, %server%
 StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"
+
+#MOTD Changer Settings
+#You can set here unlimited amount of MOTDSs
+
+#Whithelist MOTD - coming soon
+WMOTD:
+  - "§6Server §7» §l§cWartung"
+  - "§6Server §7» §l§cOffline"
+#Normal non-whitelist MOTD
+MOTD:
+  - "Test"
+  - "Test1"
+  - "Test2"
+  - "Test3"
