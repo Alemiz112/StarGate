@@ -6,6 +6,7 @@ import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.gate.tasks.PingTask;
 import alemiz.stargate.untils.gateprotocol.Convertor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -95,6 +96,7 @@ public class Server {
         GateAPI.RegisterPacket(new WelcomePacket());
         GateAPI.RegisterPacket(new PingPacket());
         GateAPI.RegisterPacket(new PlayerTransferPacket());
+        GateAPI.RegisterPacket(new KickPacket());
     }
 
     private void initConfig(){
@@ -118,6 +120,7 @@ public class Server {
     protected boolean processPacket(String client, String packetString){
         String[] data = Convertor.getPacketStringData(packetString);
         int PacketId = Integer.decode(data[0]);
+
 
         if (!packets.containsKey(PacketId) || packets.get(PacketId) == null) return false;
 
@@ -153,6 +156,8 @@ public class Server {
     private void handlePacket(String client, StarGatePacket packet){
         int type = packet.getID();
 
+        ProxiedPlayer player;
+
         switch (type){
             case Packets.WELCOME_PACKET:
                 WelcomePacket welcomePacket = (WelcomePacket) packet;
@@ -182,7 +187,7 @@ public class Server {
                 break;
             case Packets.PLAYER_TRANSFORM_PACKET:
                 PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;
-                ProxiedPlayer player = transferPacket.getPlayer();
+                player = transferPacket.getPlayer();
 
                 if (player == null){
                     plugin.getLogger().info("§cWARNING: §bTransfer Packet => Player not found!");
@@ -192,6 +197,16 @@ public class Server {
                 }
 
                 break;
+            case Packets.KICK_PACKET:
+                KickPacket kickPacket = (KickPacket) packet;
+                player = kickPacket.getPlayer();
+
+                if (player == null){
+                    plugin.getLogger().info("§cWARNING: §bKick Packet => Player not found!");
+                }else {
+                    String reason = StarGate.getInstance().colorText(kickPacket.getReason());
+                    player.disconnect(new TextComponent(reason));
+                }
             default:
                 /** Here we call Event that will send packet to DEVs plugin*/
                 plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));

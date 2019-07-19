@@ -35,7 +35,6 @@ public class WelcomePacket extends StarGatePacket {
     @Override
     public void encode() {
         Convertor convertor = new Convertor(getID());
-        convertor.putInt(ID);
         convertor.putString(server);
 
         convertor.putInt(tps);

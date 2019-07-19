@@ -1,5 +1,6 @@
 package alemiz.stargate.gate;
 
+import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.packets.Packets;
 import alemiz.stargate.gate.packets.StarGatePacket;
 import alemiz.stargate.gate.packets.WelcomePacket;
@@ -31,7 +32,7 @@ public class GateAPI {
         try{
             clientHandler.getOut().println("GATE_PING:" +System.nanoTime());
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            StarGate.getInstance().getLogger().info("§cWARNING: Error while pinging "+client+" => "+e.getMessage());
         }
     }
 
@@ -41,7 +42,6 @@ public class GateAPI {
         gateServer.clients.forEach((client, handler)->{
             ping(client);
         });
-        System.out.println("Ping ALL!");
     }
 
 }

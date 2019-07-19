@@ -1,17 +1,6 @@
 #StarGate WaterDog Core
 #Project by Alemiz
 
-#Set StaffChat caller
-StaffChatCaller: "!"
-#StaffChat format
-#You can use: %player%, %message%, %server%
-StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"
-
-Perms:
-  alemiz003:
-    - "stargate.staffchat"
-    - "stargate.staff"
-
 #Settings of StarGate Communication service
 StarGate:
   port: 47007

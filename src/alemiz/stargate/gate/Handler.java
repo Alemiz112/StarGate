@@ -63,15 +63,6 @@ class Handler implements Runnable {
                 }
             }
 
-            /*for (;;){
-                if (line.equals("GATE_CLOSE")) break;
-                line = in.readLine();
-
-                if (!GateAPI.getGateServer().processPacket(line)){
-                    StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet !");
-                }
-            }*/
-
         } catch(IOException i) {
             if (i.getMessage() == "Connection reset" || i.getMessage() == "Stream closed") return;
 

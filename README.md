@@ -3,21 +3,22 @@
 >Plugin made for WaterDog, awesome proxy for mcbe (latest version)
 
 ## 🎯 Features:    
- ✔️ StaffChat<br>
- ✔️ StaffFind/StaffList<br>
- ✔️ PlayerFind<br>
- ✔️ QueryUpdater<br>
+ ✔️ StaffChat ([moved](https://github.com/Alemiz112/StarGate-Addons))<br>
+ ✔️ StaffFind/StaffList ([moved](https://github.com/Alemiz112/StarGate-Addons))<br>
+ ✔️ PlayerFind ([moved](https://github.com/Alemiz112/StarGate-Addons))<br>
+ ✔️ QueryUpdater ([moved](https://github.com/Alemiz112/StarGate-Addons))<br>
+ ✔️ Communication between WaterDog clients/servers
   <br>
 ## 📝 TODO:
  ✔️ API for PocketMine developers<br>
  ✔️ PartyMode<br>
 ## 🔧 DEV Only:
- ✔️ Plugin Messaging System(not done yet)<br>
+ ✔️ Plugin Messaging System(stable)<br>
  
  
 ## 📘 Commands:
 
-**StarGate Commands:**  
+**StarGate Commands ([moved](https://github.com/Alemiz112/StarGate-Addons)):**  
   
 | **Name/Command** | **Usage** |  
 | --- | --- |  
@@ -25,17 +26,22 @@
 | **/look** | **Find Player** <br><br> Usage: `/look <player>` <br><br> This command will help you find a players server. You dont need to write full name of player. <br> Permission: `stargate.staff`
 | **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> This command will send you list of all online staff. <br> Permission: `stargate.staff`
 
+## ⚙ StarGate Protocol:
+StarGate Protocol is service that servers that are connected to WaterDog to communicate between
+#####Server clients:
+- [Nukkit](https://github.com/Alemiz112/StarGate-Universe)
+- PMMP (soon)
+
 ## 🔨 Config:  
 - Here you can change StaffChat caller
 - Default configuration:
 
 ```yaml  
 ---
-#Set StaffChat caller
-StaffChatCaller: "!"
-#StaffChat format
-#You can use: %player%, %message%, 
-StaffChatFormat: "§7[§6Staff§7] §f%player% : §7%message%"    
+#Settings of StarGate Communication service
+StarGate:
+  port: 47007
+  maxConnections: 50 
 ...  
 ```  
 ## 📋 Special Thanks To:

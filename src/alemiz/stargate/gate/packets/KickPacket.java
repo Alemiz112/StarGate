@@ -3,15 +3,14 @@ package alemiz.stargate.gate.packets;
 import alemiz.stargate.untils.gateprotocol.Convertor;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
 
-public class PlayerTransferPacket extends StarGatePacket {
+public class KickPacket extends StarGatePacket {
 
+    public String reason;
     public ProxiedPlayer player;
-    public String destination;
 
-    public PlayerTransferPacket(){
-        super("PLAYER_TRANSFORM_PACKET", Packets.PLAYER_TRANSFORM_PACKET);
+    public KickPacket(){
+        super("KICK_PACKET", Packets.KICK_PACKET);
     }
 
     @Override
@@ -20,7 +19,7 @@ public class PlayerTransferPacket extends StarGatePacket {
 
         String[] data = Convertor.getPacketStringData(encoded);
         player = BungeeCord.getInstance().getPlayer(data[1]);
-        destination = data[2];
+        reason = data[2];
     }
 
     @Override
@@ -28,9 +27,10 @@ public class PlayerTransferPacket extends StarGatePacket {
         Convertor convertor = new Convertor(getID());
 
         convertor.putString(player.getName());
-        convertor.putString(destination);
+        convertor.putString(reason);
 
         this.encoded = convertor.getPacketString();
+
         isEncoded = true;
     }
 
@@ -43,7 +43,7 @@ public class PlayerTransferPacket extends StarGatePacket {
         return player;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getReason() {
+        return reason;
     }
 }
