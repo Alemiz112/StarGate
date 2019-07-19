@@ -30,7 +30,6 @@ public class KickPacket extends StarGatePacket {
         convertor.putString(reason);
 
         this.encoded = convertor.getPacketString();
-
         isEncoded = true;
     }
 

@@ -71,7 +71,7 @@ public class Convertor {
             newData[i] = value;
             i++;
         }
-        newData[i + 1] = string;
+        newData[i] = string;
         data = newData;
     }
 }

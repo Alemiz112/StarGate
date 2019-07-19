@@ -21,8 +21,8 @@ public class GateAPI {
         gateServer.packets.put(packet.getID(), packet);
     }
 
-    public static void putPacket(String client, StarGatePacket packet){
-        gateServer.gatePacket(client, packet);
+    public static String putPacket(String client, StarGatePacket packet){
+        return gateServer.gatePacket(client, packet);
     }
 
     public static void ping(String client){
@@ -42,6 +42,19 @@ public class GateAPI {
         gateServer.clients.forEach((client, handler)->{
             ping(client);
         });
+    }
+
+    /* We use this function to set response of packet based on UUID
+    * Response it then send to client that sent our packet*/
+    public static void setResponse(String client, String uuid, String response){
+        if (!gateServer.clients.containsKey(client) || gateServer.clients.get(client) == null) return;
+        Handler clientHandler = gateServer.clients.get(client);
+
+        try {
+            clientHandler.getOut().println("GATE_RESPONSE:"+uuid+":"+response);
+        }catch (Exception e){
+            StarGate.getInstance().getLogger().info("§cWARNING: Error while sending response to  "+client+" => "+e.getMessage());
+        }
     }
 
 }

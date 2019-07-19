@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ProxyServer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 
 class Handler implements Runnable {
 
@@ -96,18 +97,21 @@ class Handler implements Runnable {
         return true;
     }
 
-    public void gatePacket(StarGatePacket packet){
-        String data;
+    public String gatePacket(StarGatePacket packet){
+        String packetString;
         if (!packet.isEncoded) {
             packet.encode();
         }
 
-        data = packet.encoded;
+        packetString = packet.encoded;
+        String uuid = UUID.randomUUID().toString();
+
 
         try {
-            out.println(data);
+            out.println(packetString +"!"+ uuid);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+        return  uuid;
     }
 }

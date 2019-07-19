@@ -107,11 +107,11 @@ public class Server {
     /* This function we use to send packet to Clients
      * You must specify Client name or Chevron and packet that will be sent*/
 
-    protected void gatePacket(String client, StarGatePacket packet){
-        if (!clients.containsKey(client) || clients.get(client) == null) return;
+    protected String gatePacket(String client, StarGatePacket packet){
+        if (!clients.containsKey(client) || clients.get(client) == null) return null;
 
         Handler clientHandler = clients.get(client);
-        clientHandler.gatePacket(packet);
+        return clientHandler.gatePacket(packet);
     }
 
     /* Using these function we can process packet from string to data
@@ -126,6 +126,7 @@ public class Server {
 
         /* Here we decode Packet. Create from String Data*/
         StarGatePacket packet = packets.get(PacketId);
+        String uuid = data[data.length - 1];
 
 
         /* Preprocessing official packets if its needed.
@@ -143,6 +144,7 @@ public class Server {
                 packet.encoded = Convertor.getPacketString(data);
                 break;
             default:
+                packet.uuid = uuid;
                 packet.encoded = packetString;
                 break;
         }
