@@ -97,6 +97,7 @@ public class Server {
         GateAPI.RegisterPacket(new PingPacket());
         GateAPI.RegisterPacket(new PlayerTransferPacket());
         GateAPI.RegisterPacket(new KickPacket());
+        GateAPI.RegisterPacket(new PlayerOnlinePacket());
     }
 
     private void initConfig(){
@@ -209,6 +210,16 @@ public class Server {
                     String reason = StarGate.getInstance().colorText(kickPacket.getReason());
                     player.disconnect(new TextComponent(reason));
                 }
+                break;
+            case Packets.PLAYER_ONLINE_PACKET:
+                PlayerOnlinePacket onlinePacket = (PlayerOnlinePacket) packet;
+
+                if (onlinePacket.getPlayer() == null || !onlinePacket.getPlayer().isConnected()){
+                    GateAPI.setResponse(client, onlinePacket.getUuid(), "false");
+                }else {
+                    GateAPI.setResponse(client, onlinePacket.getUuid(), "true!"+onlinePacket.getPlayer().getServer().getInfo().getName());
+                }
+                break;
             default:
                 /** Here we call Event that will send packet to DEVs plugin*/
                 plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));
