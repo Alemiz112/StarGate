@@ -22,7 +22,7 @@ public abstract class StarGatePacket implements Cloneable{
     public String uuid;
 
     /** We use this functions to be able work with string compression
-     * encode() => Converts data to string and save it tp $encoded
+     * encode() => Converts data to string and save it to $encoded
      * decode() => Converts from string in $encoded and saves it
      * Every packet has custom data, so you must adjust it yourself
      * Try to inspire by official packets*/

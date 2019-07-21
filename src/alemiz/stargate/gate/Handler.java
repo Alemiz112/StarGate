@@ -2,7 +2,6 @@ package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.packets.StarGatePacket;
-import net.md_5.bungee.api.ProxyServer;
 
 import java.io.*;
 import java.net.Socket;

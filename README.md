@@ -27,10 +27,11 @@
 | **/staff** | **Display list of Staffr** <br><br> Usage: `/staff` <br><br> This command will send you list of all online staff. <br> Permission: `stargate.staff`
 
 ## ⚙ StarGate Protocol:
-StarGate Protocol is service that servers that are connected to WaterDog to communicate between
-#####Server clients:
+StarGate Protocol is service that allows servers witch are connected to WaterDog to communicate between
+##### Server clients:
 - [Nukkit](https://github.com/Alemiz112/StarGate-Universe)
-- PMMP (soon)
+- PMMP (soon)</br>
+Please consider visiting [wiki](https://github.com/Alemiz112/StarGate/wiki).
 
 ## 🔨 Config:  
 - Here you can change StaffChat caller

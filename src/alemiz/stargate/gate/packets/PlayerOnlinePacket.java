@@ -37,4 +37,5 @@ public class PlayerOnlinePacket extends StarGatePacket {
     public ProxiedPlayer getPlayer() {
         return player;
     }
+
 }

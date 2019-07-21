@@ -5,18 +5,13 @@ import alemiz.stargate.gate.events.CustomPacketEvent;
 import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.gate.tasks.PingTask;
 import alemiz.stargate.untils.gateprotocol.Convertor;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -89,7 +84,7 @@ public class Server {
     }
 
     /**
-     * Here we are registring new Packets, may be useful for DEV
+     * Here we are registering new Packets, may be useful for DEV
      * Every packet Extends @class StarGatePacket*/
 
     private void initPackets(){
@@ -228,7 +223,6 @@ public class Server {
     }
 
     /* Server Data*/
-
     public Map<String, Handler> getClients() {
         return clients;
     }

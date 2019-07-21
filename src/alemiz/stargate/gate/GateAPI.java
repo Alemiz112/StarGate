@@ -1,9 +1,7 @@
 package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
-import alemiz.stargate.gate.packets.Packets;
 import alemiz.stargate.gate.packets.StarGatePacket;
-import alemiz.stargate.gate.packets.WelcomePacket;
 
 public class GateAPI {
 
@@ -45,7 +43,7 @@ public class GateAPI {
     }
 
     /* We use this function to set response of packet based on UUID
-    * Response it then send to client that sent our packet*/
+    * Response is then send to client that sent our packet*/
     public static void setResponse(String client, String uuid, String response){
         if (!gateServer.clients.containsKey(client) || gateServer.clients.get(client) == null) return;
         Handler clientHandler = gateServer.clients.get(client);
