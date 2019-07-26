@@ -7,4 +7,5 @@ public interface Packets {
     int PLAYER_TRANSFORM_PACKET = 0x03;
     int KICK_PACKET = 0x04;
     int PLAYER_ONLINE_PACKET = 0x05;
+    int FORWARD_PACKET = 0x06;
 }

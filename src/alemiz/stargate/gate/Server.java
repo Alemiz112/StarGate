@@ -44,6 +44,7 @@ public class Server {
         initConfig();
         initPackets();
         start();
+
     }
 
     public static Server getInstance(){
@@ -93,6 +94,7 @@ public class Server {
         GateAPI.RegisterPacket(new PlayerTransferPacket());
         GateAPI.RegisterPacket(new KickPacket());
         GateAPI.RegisterPacket(new PlayerOnlinePacket());
+        GateAPI.RegisterPacket(new ForwardPacket());
     }
 
     private void initConfig(){
@@ -148,6 +150,7 @@ public class Server {
         packet.decode();
 
         handlePacket(client, packet);
+        //plugin.getLogger().info("§6"+packetString);
         return true;
     }
 
@@ -215,6 +218,21 @@ public class Server {
                     GateAPI.setResponse(client, onlinePacket.getUuid(), "true!"+onlinePacket.getPlayer().getServer().getInfo().getName());
                 }
                 break;
+            case Packets.FORWARD_PACKET:
+                ForwardPacket forwardPacket = (ForwardPacket) packet;
+                String sendto = forwardPacket.getClient();
+
+                if (!clients.containsKey(sendto) || (clients.get(sendto) == null)){
+                    plugin.getLogger().info("§cWARNING: ForwardPacket => Client §6"+sendto+"§c isnt connected!");
+                    return;
+                }
+
+                Handler handler = clients.get(sendto);
+                String data = forwardPacket.getEncodedPacket();
+
+                handler.getOut().println(data);
+                break;
+
             default:
                 /** Here we call Event that will send packet to DEVs plugin*/
                 plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));

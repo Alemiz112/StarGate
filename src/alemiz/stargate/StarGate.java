@@ -70,5 +70,4 @@ public class StarGate extends Plugin implements Listener{
     public String colorText(String message){
         return ChatColor.translateAlternateColorCodes('§', message);
     }
-
 }
