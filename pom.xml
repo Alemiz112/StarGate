@@ -39,9 +39,8 @@
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
+            <artifactId>bungeecord-proxy</artifactId>
             <version>1.14-SNAPSHOT</version>
-            <type>jar</type>
             <scope>provided</scope>
         </dependency>
     </dependencies>
