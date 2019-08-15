@@ -38,10 +38,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>network.ycc.waterdog</groupId>
-            <artifactId>waterdog-super</artifactId>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-proxy</artifactId>
             <version>1.14-SNAPSHOT</version>
-            <type>javadoc</type
             <scope>provided</scope>
         </dependency>
     </dependencies>
