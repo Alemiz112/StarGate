@@ -29,7 +29,7 @@
             <artifactId>bungeecord-api</artifactId>
             <type>jar</type>
             <scope>system</scope>
-            <systemPath>https://ci.codemc.org/job/yesdog/job/Waterdog/lastSuccessfulBuild/artifact/Waterfall-Proxy/bootstrap/target/Waterdog.jar</systemPath>
+            <url>https://ci.codemc.org/job/yesdog/job/Waterdog/lastSuccessfulBuild/artifact/Waterfall-Proxy/bootstrap/target/Waterdog.jar</url>
         </dependency>
     </dependencies>
 </project>
