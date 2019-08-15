@@ -9,58 +9,41 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
          
+     <repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                    <encoding>UTF-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-         
-   <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
-    <repositories>
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-chat</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.14-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-config</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.14-SNAPSHOT</version>
+            <type>javadoc</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    
 </project>
