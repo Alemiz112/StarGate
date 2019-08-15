@@ -41,6 +41,7 @@
             <groupId>network.ycc.waterdog</groupId>
             <artifactId>waterdog-super</artifactId>
             <version>1.14-SNAPSHOT</version>
+            <type>javadoc</type
             <scope>provided</scope>
         </dependency>
     </dependencies>
