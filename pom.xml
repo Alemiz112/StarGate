@@ -38,8 +38,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
+            <groupId>network.ycc.waterdog</groupId>
+            <artifactId>waterdog-super</artifactId>
             <version>1.14-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
