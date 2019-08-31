@@ -1,5 +1,5 @@
 name: "StarGate"
-version: 1.2.3
+version: 1.2.5
 author: "Alemiz"
 description: "StarGate is super Core plugin for WaterFall"
 main: alemiz.stargate.StarGate
