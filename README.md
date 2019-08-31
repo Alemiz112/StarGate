@@ -1,7 +1,7 @@
 # StarGate
 <a align="center" href="https://discord.gg/VsHXm2M"><img src="https://discordapp.com/api/guilds/574240965351571477/embed.png" alt="Discord server"/> </a>[![Build Status](https://travis-ci.org/Alemiz112/StarGate.svg?branch=master)](https://travis-ci.org/Alemiz112/StarGate) [![Build Status](http://jenkins.mizerak.eu/job/StarGate/badge/icon)](http://jenkins.mizerak.eu/job/StarGate/)
 >Plugin made for WaterDog, awesome proxy for mcbe (latest version)
-> Download [here](http://jenkins.mizerak.eu/job/StarGate/)!
+</br>Download [here](http://jenkins.mizerak.eu/job/StarGate/)!
 
 ## 🎯 Features:    
  ✔️ Communication between WaterDog clients/servers
