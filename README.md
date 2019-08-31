@@ -30,8 +30,7 @@ Please consider visiting [wiki](https://github.com/Alemiz112/StarGate/wiki).
 #Settings of StarGate Communication service
 StarGate:
   port: 47007
-  maxConnections: 50 
-...  
+  maxConnections: 50   
 ```  
 ## 📋 Special Thanks To:
 Everyone who downloaded this plugin. To persons who inspiraded me to start this plugin. Thanks to You, this project will be updated for a long time
