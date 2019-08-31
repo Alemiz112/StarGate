@@ -181,10 +181,11 @@ public class Server {
                     }
 
                     clients.remove(client);
-                }else{
+                }/*else{ DEBUG STUFF
                     int ping = pingPacket.getPing();
+
                     plugin.getLogger().info("§bPING: §e"+ ping);
-                }
+                }*/
                 break;
             case Packets.PLAYER_TRANSFORM_PACKET:
                 PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;
@@ -194,6 +195,13 @@ public class Server {
                     plugin.getLogger().info("§cWARNING: §bTransfer Packet => Player not found!");
                 }else {
                     ServerInfo server = plugin.getProxy().getServerInfo(transferPacket.getDestination());
+
+                    /*Prevent disconnecting client if server doesnt exist*/
+                    if (server == null){
+                        player.sendMessage(new TextComponent("§cCant connect to server §6"+transferPacket.getDestination()+"§c!"));
+                        plugin.getLogger().info("§cWARNING: Player "+player.getName()+" was supposed to connect server that is unreachable!");
+                        return;
+                    }
                     player.connect(server);
                 }
 
