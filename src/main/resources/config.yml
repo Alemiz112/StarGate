@@ -1,0 +1,7 @@
+#StarGate WaterDog Core
+#Project by Alemiz
+
+#Settings of StarGate Communication service
+StarGate:
+  port: 47007
+  maxConnections: 50

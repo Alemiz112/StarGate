@@ -1,0 +1,59 @@
+//        try {
+//            server = ProxyServer.getInstance();
+//
+//            in = new DataInputStream(socket.getInputStream());
+//            //out = new PrintWriter(socket.getOutputStream(), true);
+//            out = new DataOutputStream(socket.getOutputStream());
+//
+//            while (true) {
+//                name = in.readUTF();
+//                if (!name.startsWith("CHEVRON:") || name.length() <= 8) {
+//                    continue;
+//                }
+//                name = name.substring(8);
+//
+//                server.getLogger().info("§aNew client connected: §6"+name);
+//                server.getLogger().info("§aADDRESS: §e"+socket.getInetAddress().toString().replace("/", "")+":"+socket.getPort());
+//
+//
+//                GateAPI.getGateServer().clients.put(name, out);
+//                break;
+//            }
+//
+//            /*Sending message to Client to confirm successful Connection*/
+//            out.writeUTF("GATE_OPENED");
+//            out.flush();
+//
+//            while (true) {
+//                /*if (!in.hasNextLine()){
+//                    //try{Thread.sleep(50);
+//                        continue;
+//                    //}catch(InterruptedException e){}
+//                }*/
+//                if (socket.isClosed()) break;
+//
+//                //if (input.equals("GATE_CLOSE")) break;
+//
+//                message = in.readUTF();
+//
+//                System.out.println(message);
+//                GateAPI.getGateServer().processPacket(message);
+//
+//                /*if (!GateAPI.getGateServer().processPacket(in.nextLine())){
+//                    server.getLogger().info("§cWARNING: Unknown packet received!");
+//                }*/
+//            }
+//
+//
+//        }catch (Exception e) {
+//            ProxyServer.getInstance().getLogger().info("§cERROR: Connection with "+name+" has been aborted!");
+//            System.out.println(e);
+//        }finally {
+//            //server.clients.remove(name);
+//            //server.plugin.getLogger().info("§cWARNING! Client disconnected: §6"+name);
+//
+//            try {
+//                socket.close();
+//                ProxyServer.getInstance().getLogger().info("§cWARNING: Connection with "+name+" has been closed!");
+//            } catch(IOException e) {}
+//        }
