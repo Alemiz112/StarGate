@@ -5,6 +5,7 @@ import alemiz.stargate.gate.events.CustomPacketEvent;
 import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.gate.tasks.PingTask;
 import alemiz.stargate.untils.gateprotocol.Convertor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -220,11 +221,21 @@ public class Server {
             case Packets.PLAYER_ONLINE_PACKET:
                 PlayerOnlinePacket onlinePacket = (PlayerOnlinePacket) packet;
 
-                if (onlinePacket.getPlayer() == null || !onlinePacket.getPlayer().isConnected()){
+                ProxiedPlayer guest = null;
+                if (onlinePacket.getPlayer() == null && onlinePacket.getCustomPlayer() != null){
+                    guest = ProxyServer.getInstance().getPlayer(onlinePacket.getCustomPlayer());
+                }
+
+                if (onlinePacket.getPlayer() != null && onlinePacket.getPlayer().isConnected()){
+                    guest = onlinePacket.getPlayer();
+                }
+
+                if (guest == null){
                     GateAPI.setResponse(client, onlinePacket.getUuid(), "false");
                 }else {
-                    GateAPI.setResponse(client, onlinePacket.getUuid(), "true!"+onlinePacket.getPlayer().getServer().getInfo().getName());
+                    GateAPI.setResponse(client, onlinePacket.getUuid(), "true!"+guest.getServer().getInfo().getName());
                 }
+
                 break;
             case Packets.FORWARD_PACKET:
                 ForwardPacket forwardPacket = (ForwardPacket) packet;

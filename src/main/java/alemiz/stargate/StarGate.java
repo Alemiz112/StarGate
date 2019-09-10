@@ -12,7 +12,6 @@ import java.io.*;
 
 import com.google.common.io.ByteStreams;
 
-
 public class StarGate extends Plugin implements Listener{
 
     private static StarGate instance;
