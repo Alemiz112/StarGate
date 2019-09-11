@@ -11,6 +11,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -116,7 +117,7 @@ public class Server {
     /* Using these function we can process packet from string to data
     *  After packet is successfully created we can handle that Packet*/
 
-    protected boolean processPacket(String client, String packetString){
+    protected boolean processPacket(String client, String packetString) throws InstantiationException, IllegalAccessException{
         String[] data = Convertor.getPacketStringData(packetString);
         int PacketId = Integer.decode(data[0]);
 
@@ -124,7 +125,7 @@ public class Server {
         if (!packets.containsKey(PacketId) || packets.get(PacketId) == null) return false;
 
         /* Here we decode Packet. Create from String Data*/
-        StarGatePacket packet = packets.get(PacketId);
+        StarGatePacket packet = packets.get(PacketId).getClass().newInstance();
         String uuid = data[data.length - 1];
 
 
@@ -222,7 +223,7 @@ public class Server {
                 PlayerOnlinePacket onlinePacket = (PlayerOnlinePacket) packet;
 
                 ProxiedPlayer guest = null;
-                if (onlinePacket.getPlayer() == null && onlinePacket.getCustomPlayer() != null){
+                if (onlinePacket.getCustomPlayer() != null){
                     guest = ProxyServer.getInstance().getPlayer(onlinePacket.getCustomPlayer());
                 }
 

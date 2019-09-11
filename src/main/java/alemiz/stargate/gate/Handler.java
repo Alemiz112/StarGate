@@ -58,8 +58,13 @@ class Handler implements Runnable {
 
                 if (line.equals("GATE_CLOSE")) break;
 
-                if (!GateAPI.getGateServer().processPacket(name, line)){
-                    StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet !");
+                try {
+                    if (!GateAPI.getGateServer().processPacket(name, line)){
+                        StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet !");
+                    }
+                }catch (Exception e){
+                    StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
+                    StarGate.getInstance().getLogger().info("§c"+e);
                 }
             }
 
