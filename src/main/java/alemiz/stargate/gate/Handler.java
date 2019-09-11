@@ -54,6 +54,10 @@ class Handler implements Runnable {
             GateAPI.ping(name);
 
             while (true) {
+                /* This should prevent higher CPU usage*/
+                if (socket.getInputStream().available() < 0){
+                    continue;
+                }
                 String line = in.readLine();
 
                 if (line.equals("GATE_CLOSE")) break;
