@@ -4,6 +4,8 @@ package alemiz.stargate.gate.packets;
 * Your packet must extend this class so 'extends StarGatePacket'
 * I recommend to look into some official packet to better understanding*/
 
+import alemiz.stargate.gate.*;
+
 public abstract class StarGatePacket implements Cloneable{
 
     /* Literally its packet Name*/
@@ -39,6 +41,11 @@ public abstract class StarGatePacket implements Cloneable{
     public StarGatePacket(String type, int ID){
         this.type = type;
         this.ID = ID;
+    }
+
+    /* Put packet to server*/
+    public String putPacket(String client){
+        return GateAPI.putPacket(client, this);
     }
 
     public String getType(){

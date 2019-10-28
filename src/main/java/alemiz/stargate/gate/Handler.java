@@ -1,6 +1,7 @@
 package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.packets.ConnectionInfoPacket;
 import alemiz.stargate.gate.packets.StarGatePacket;
 
 import java.io.*;
@@ -27,6 +28,10 @@ class Handler implements Runnable {
         return in;
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
+
     public void run() {
         try {
             //in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -36,17 +41,42 @@ class Handler implements Runnable {
 
             while (true) {
 
-               name = in.readLine();
-               if (name.startsWith("CHEVRON:") && name.length() > 8) {
-                   name = name.substring(8);
+               String handshake = in.readLine();
+               if (handshake.startsWith("CHEVRON:") && handshake.length() > 8) {
+                   String[] handshakeData = handshake.substring(8).split(":");
+                   name = handshakeData[0];
+
+                   /* Password not set*/
+                   if (handshakeData.length < 2 || !handshakeData[1].equals(Server.password)){
+                       StarGate.getInstance().getLogger().warning("§aNew client attends to connect: §6"+name);
+                       StarGate.getInstance().getLogger().warning("§cClient not authenticated! Wrong password!");
+
+                      gatePacket(new ConnectionInfoPacket(){{
+                           packetType = CONNECTION_ABORTED;
+                           reason = WRONG_PASSWORD;
+                           isEncoded = false;
+                      }});
+                      return;
+                   }
+
+                   if (GateAPI.getGateServer().clients.containsKey(name)){
+                       gatePacket(new ConnectionInfoPacket(){{
+                           packetType = CONNECTION_ABORTED;
+                           reason = "Server with this name already is connected";
+                           isEncoded = false;
+                       }});
+                       return;
+                   }
+
+                   /*Sending message to Client to confirm successful Connection*/
+                   gatePacket(new ConnectionInfoPacket(){{
+                       packetType = CONNECTION_CONNECTED;
+                       isEncoded = false;
+                   }});
+                   GateAPI.getGateServer().clients.put(name, this);
 
                    StarGate.getInstance().getLogger().info("§aNew client connected: §6"+name);
                    StarGate.getInstance().getLogger().info("§aADDRESS: §e"+socket.getInetAddress().toString().replace("/", "")+":"+socket.getPort());
-
-                   /*Sending message to Client to confirm successful Connection*/
-                   out.println("GATE_OPENED");
-
-                   GateAPI.getGateServer().clients.put(name, this);
                    break;
                }
             }
@@ -68,7 +98,7 @@ class Handler implements Runnable {
                     }
                 }catch (Exception e){
                     StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
-                    StarGate.getInstance().getLogger().info("§c"+e);
+                    StarGate.getInstance().getLogger().info("§c"+e.getStackTrace()[0].getLineNumber());
                 }
             }
 
@@ -92,7 +122,10 @@ class Handler implements Runnable {
     public boolean reconnect(){
         StarGate.getInstance().getLogger().info("§cWARNING: Reconnecting §6"+name+"§c!");
         try {
-            out.println("GATE_RECONNECT");
+            gatePacket(new ConnectionInfoPacket(){{
+                packetType = CONNECTION_RECONNECT;
+                isEncoded = false;
+            }});
 
             /* We give some small time for client to make him receive message
             * and prepare for reconnecting*/
@@ -113,7 +146,6 @@ class Handler implements Runnable {
 
         packetString = packet.encoded;
         String uuid = UUID.randomUUID().toString();
-
 
         try {
             out.println(packetString +"!"+ uuid);

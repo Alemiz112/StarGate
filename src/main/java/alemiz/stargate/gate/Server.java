@@ -30,6 +30,7 @@ public class Server {
      */
     protected static int port = 47007;
     protected static int maxConn = 50;
+    protected static String password = "123456789";
 
 
     protected Map<String, Handler> clients = new HashMap<>();
@@ -39,6 +40,7 @@ public class Server {
     protected Thread serverThread;
 
     public Server(StarGate plugin){
+        instance = this;
         this.plugin = plugin;
 
         gateAPI = new GateAPI(this);
@@ -46,7 +48,6 @@ public class Server {
         initConfig();
         initPackets();
         start();
-
     }
 
     public static Server getInstance(){
@@ -97,11 +98,13 @@ public class Server {
         GateAPI.RegisterPacket(new KickPacket());
         GateAPI.RegisterPacket(new PlayerOnlinePacket());
         GateAPI.RegisterPacket(new ForwardPacket());
+        GateAPI.RegisterPacket(new ConnectionInfoPacket());
     }
 
     private void initConfig(){
-        port = plugin.cfg.getInt("StarGate.port");
-        maxConn = plugin.cfg.getInt("StarGate.maxConnections");
+        port = plugin.cfg.getInt("port");
+        maxConn = plugin.cfg.getInt("maxConnections");
+        password = plugin.cfg.getString("password");
     }
 
     /* This function we use to send packet to Clients
@@ -259,6 +262,11 @@ public class Server {
                 break;
         }
     }
+
+    /*public boolean isConnected(String client){
+        if (!clients.containsKey(client)) return false;
+        if (clients.get(client) == null || clients.get(client).getSocket().is) return false;
+    }*/
 
     /* Server Data*/
     public Map<String, Handler> getClients() {

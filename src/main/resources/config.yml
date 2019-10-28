@@ -1,7 +1,11 @@
 #StarGate WaterDog Core
 #Project by Alemiz
 
-#Settings of StarGate Communication service
-StarGate:
-  port: 47007
-  maxConnections: 50
+#StarGate service port
+port: 47007
+#Set maximum connected clients. Good performance tested with 50 clients
+#More clients = higher CPU usage
+maxConnections: 50
+
+#To make connection secure enough set strong password
+password: "123456789"
