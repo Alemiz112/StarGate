@@ -18,7 +18,7 @@ public abstract class StarGatePacket implements Cloneable{
     protected int ID;
 
     public String encoded;
-    public boolean isEncoded = true;
+    public boolean isEncoded = false;
 
     /* UUID is used for returning response if is needed*/
     public String uuid;
