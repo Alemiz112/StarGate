@@ -263,10 +263,16 @@ public class Server {
         }
     }
 
-    /*public boolean isConnected(String client){
-        if (!clients.containsKey(client)) return false;
-        if (clients.get(client) == null || clients.get(client).getSocket().is) return false;
-    }*/
+    /* Simple method to check if client is alive*/
+    public boolean isConnected(String client){
+        try {
+            Handler handler = clients.get(client);
+            handler.getOut().println("GATE_STATUS:" +System.nanoTime());
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
 
     /* Server Data*/
     public Map<String, Handler> getClients() {

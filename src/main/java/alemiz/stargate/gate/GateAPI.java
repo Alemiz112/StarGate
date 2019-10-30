@@ -55,4 +55,7 @@ public class GateAPI {
         }
     }
 
+    public static  boolean isConnected(String client){
+        return gateServer.isConnected(client);
+    }
 }
