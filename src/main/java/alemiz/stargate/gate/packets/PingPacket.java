@@ -4,8 +4,8 @@ import alemiz.stargate.untils.gateprotocol.Convertor;
 
 public class PingPacket extends StarGatePacket {
 
-    private int ping;
-    private String client;
+    protected String pingData;
+    protected String client;
 
     public PingPacket(){
         super("PING_PACKET", Packets.PING_PACKET);
@@ -17,14 +17,14 @@ public class PingPacket extends StarGatePacket {
 
         String[] data = Convertor.getPacketStringData(encoded);
 
-        ping = Convertor.getInt(data[1]);
+        pingData = data[1];
         client = data[2];
     }
 
     @Override
     public void encode() {
         Convertor convertor = new Convertor(getID());
-        convertor.putInt(ping);
+        convertor.putString(pingData);
         convertor.putString(client);
 
         this.encoded = convertor.getPacketString();
@@ -34,14 +34,14 @@ public class PingPacket extends StarGatePacket {
     @Override
     public StarGatePacket copy() throws CloneNotSupportedException {
         PingPacket packet = (PingPacket) super.clone();
-        packet.ping = ping;
+        packet.pingData = pingData;
         packet.client = client;
 
         return packet;
     }
 
-    public int getPing() {
-        return ping;
+    public String getPingData() {
+        return pingData;
     }
 
     public String getClient() {

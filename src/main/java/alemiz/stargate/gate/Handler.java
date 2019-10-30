@@ -134,7 +134,9 @@ class Handler implements Runnable {
             in.close();
             out.close();
             socket.close();
-        } catch(Exception e) {return  false;}
+        } catch(Exception e) {
+            return  false;
+        }
         return true;
     }
 

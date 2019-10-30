@@ -173,24 +173,24 @@ public class Server {
             case Packets.PING_PACKET:
                 PingPacket pingPacket = (PingPacket) packet;
                 long delay = TimeUnit.SECONDS.toMillis(30);
+                long ping = Convertor.getInt(pingPacket.getPingData());
 
-                if (pingPacket.getPing() > delay){
-                    Handler handler = clients.get(client);
+                plugin.getLogger().info("§bPING: §e"+ ping+"ms");
 
-                    int ping = pingPacket.getPing();
+                if ((ping/2) > delay){
                     plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
 
-                    if (!handler.reconnect()){
-                        plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
-                        plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
+                    try {
+                        Handler handler = clients.get(client);
+                        if (!handler.reconnect()){
+                            plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
+                            plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
+                        }
+                    }catch (NullPointerException e){
+                        plugin.getLogger().info("§cLooks like client §6"+client +"§c keeps already disconnected!");
                     }
-
                     clients.remove(client);
-                }/*else{ DEBUG STUFF
-                    int ping = pingPacket.getPing();
-
-                    plugin.getLogger().info("§bPING: §e"+ ping);
-                }*/
+                }
                 break;
             case Packets.PLAYER_TRANSFORM_PACKET:
                 PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;
