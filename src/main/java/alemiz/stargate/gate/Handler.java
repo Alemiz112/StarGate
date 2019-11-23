@@ -15,6 +15,7 @@ class Handler implements Runnable {
     private PrintWriter out;
 
     private String name;
+    private String closeReason = "unknown";
 
     public Handler(Socket socket) {
         this.socket = socket;
@@ -89,12 +90,21 @@ class Handler implements Runnable {
                     continue;
                 }
                 String line = in.readLine();
-
-                if (line.equals("GATE_CLOSE")) break;
+                if (line == null) continue;
 
                 try {
-                    if (!GateAPI.getGateServer().processPacket(name, line)){
+                    StarGatePacket packet;
+
+                    if ((packet = GateAPI.getGateServer().processPacket(name, line)) == null){
                         StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet !");
+                    }else {
+                        if (packet instanceof ConnectionInfoPacket){
+                            if (((ConnectionInfoPacket) packet).packetType == ConnectionInfoPacket.CONNECTION_CLOSED){
+                                String reason = ((ConnectionInfoPacket) packet).reason;
+                                closeReason = (reason == null) ? closeReason : reason;
+                                break;
+                            }
+                        }
                     }
                 }catch (Exception e){
                     StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
@@ -110,6 +120,7 @@ class Handler implements Runnable {
         } finally {
             GateAPI.getGateServer().clients.remove(name);
             StarGate.getInstance().getLogger().info("§cWARNING: Connection with §6"+name+"§c has been closed!");
+            StarGate.getInstance().getLogger().info("§cReason: §4"+closeReason);
 
             try {
                 in.close();

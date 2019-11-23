@@ -12,6 +12,8 @@ public class ConnectionInfoPacket extends StarGatePacket {
 
     public static final String ABORTED = "Connection unacceptable closed";
     public static final String WRONG_PASSWORD = "Wrong password";
+    public static final String CLIENT_SHUTDOWN = "Client was shutdown";
+    public static final String SERVER_SHUTDOWN = "Server was shutdown";
 
     public int packetType;
     public String reason = null;
@@ -27,7 +29,7 @@ public class ConnectionInfoPacket extends StarGatePacket {
         String[] data = Convertor.getPacketStringData(encoded);
         packetType = Convertor.getInt(data[1]);
 
-        if (data.length > 2){
+        if (data.length > 3){
             reason = data[2];
         }
     }

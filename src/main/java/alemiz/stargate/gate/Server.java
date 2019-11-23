@@ -120,12 +120,12 @@ public class Server {
     /* Using these function we can process packet from string to data
     *  After packet is successfully created we can handle that Packet*/
 
-    protected boolean processPacket(String client, String packetString) throws InstantiationException, IllegalAccessException{
+    protected StarGatePacket processPacket(String client, String packetString) throws InstantiationException, IllegalAccessException{
         String[] data = Convertor.getPacketStringData(packetString);
         int PacketId = Integer.decode(data[0]);
 
 
-        if (!packets.containsKey(PacketId) || packets.get(PacketId) == null) return false;
+        if (!packets.containsKey(PacketId) || packets.get(PacketId) == null) return null;
 
         /* Here we decode Packet. Create from String Data*/
         StarGatePacket packet = packets.get(PacketId).getClass().newInstance();
@@ -154,9 +154,11 @@ public class Server {
 
         packet.decode();
 
-        handlePacket(client, packet);
-        //plugin.getLogger().info("§6"+packetString);
-        return true;
+        if (!(packet instanceof ConnectionInfoPacket)){
+            handlePacket(client, packet);
+        }
+
+        return packet;
     }
 
     private void handlePacket(String client, StarGatePacket packet){
@@ -175,7 +177,7 @@ public class Server {
                 long delay = TimeUnit.SECONDS.toMillis(30);
                 long ping = Convertor.getInt(pingPacket.getPingData());
 
-                plugin.getLogger().info("§bPING: §e"+ ping+"ms");
+                //plugin.getLogger().info("§bPING: §e"+ ping+"ms");
 
                 if ((ping/2) > delay){
                     plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
