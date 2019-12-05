@@ -113,8 +113,6 @@ class Handler implements Runnable {
             }
 
         } catch(IOException i) {
-            if (i.getMessage() == "Connection reset" || i.getMessage() == "Stream closed") return;
-
             StarGate.getInstance().getLogger().info("§cERROR: Connection with §6"+name+"§c has been aborted!");
             System.out.println(i.getMessage());
         } finally {
@@ -126,7 +124,7 @@ class Handler implements Runnable {
                 in.close();
                 out.close();
                 socket.close();
-            } catch(IOException e) {}
+            } catch(Exception e) {}
         }
     }
 
