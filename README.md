@@ -19,7 +19,7 @@
 StarGate Protocol is service that allows servers witch are connected to WaterDog to communicate between
 ##### Server clients:
 - [Nukkit](https://github.com/Alemiz112/StarGate-Universe)
-- PMMP (soon, Im really busy now)</br>
+- [PMMP](https://github.com/Alemiz112/StarGate-Atlantis/)</br>
 Please consider visiting [wiki](https://github.com/Alemiz112/StarGate/wiki).
 
 ## 🔨 Config:  
