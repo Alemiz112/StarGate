@@ -11,12 +11,10 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.net.ServerSocket;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Server {
     protected StarGate plugin;
@@ -36,6 +34,7 @@ public class Server {
     protected Map<String, Handler> clients = new HashMap<>();
     protected Map<Integer, StarGatePacket> packets = new HashMap<>();
 
+    private final AtomicLong threadIndex = new AtomicLong(0);
     protected ExecutorService clientPool;
     protected Thread serverThread;
 
@@ -56,20 +55,29 @@ public class Server {
 
     public void start(){
         plugin.getLogger().info("§aStarting StarGate Protocol on Port: §2"+port);
-        clientPool = Executors.newFixedThreadPool(50);
+
+        ThreadFactory threadFactory = new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable);
+                thread.setName("StarGate client-" + threadIndex.getAndIncrement());
+                return thread;
+            }
+        };
+        this.clientPool = Executors.newFixedThreadPool(50, threadFactory);
+
 
         Runnable serverTask = new Runnable(){
             @Override
             public void run() {
                 try (ServerSocket listener = new ServerSocket(47007)) {
                     plugin.getLogger().info("§cDone! §aStarGate Protocol is successfully running. Waiting for clients...");
-
                     while (true) {
                         Handler client = new Handler(listener.accept());
                         clientPool.execute(client);
                     }
                 }catch (IOException e) {
-                    plugin.getLogger().info("§cERROR: Connection refused!\n§r" +e.getMessage());
+
                 }
             }
         };
@@ -77,7 +85,7 @@ public class Server {
         /* Here we are creating new Thread for Server only
         * Every client has its own Thread*/
 
-        serverThread = new Thread(serverTask);
+        serverThread = new Thread(serverTask, "StarGate Server");
         serverThread.start();
 
         /* Launching PingTask is very easy

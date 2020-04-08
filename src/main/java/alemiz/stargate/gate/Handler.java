@@ -17,6 +17,13 @@ class Handler implements Runnable {
     private String name;
     private String closeReason = "unknown";
 
+    private boolean authenticated = false;
+
+    private long nextTick;
+
+    private boolean isRunning = true;
+
+
     public Handler(Socket socket) {
         this.socket = socket;
     }
@@ -34,122 +41,156 @@ class Handler implements Runnable {
     }
 
     public void run() {
+        this.nextTick = System.currentTimeMillis();
+
         try {
-            //in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //out = new DataOutputStream(socket.getOutputStream());
-            out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+        }catch (Exception e){
+            StarGate.getInstance().getLogger().info("§cERROR: Unable to create sockets for §6" + name + "§!");
+            System.out.println(e.getMessage());
+            return;
+        }
 
-            while (true) {
+        while (this.isRunning) {
+            long now = System.currentTimeMillis();
+            long time = now - this.nextTick;
 
-               String handshake = in.readLine();
-               if (handshake.startsWith("CHEVRON:") && handshake.length() > 8) {
-                   String[] handshakeData = handshake.substring(8).split(":");
-                   name = handshakeData[0];
-
-                   /* Password not set*/
-                   if (handshakeData.length < 2 || !handshakeData[1].equals(Server.password)){
-                       StarGate.getInstance().getLogger().warning("§aNew client attends to connect: §6"+name);
-                       StarGate.getInstance().getLogger().warning("§cClient not authenticated! Wrong password!");
-
-                      gatePacket(new ConnectionInfoPacket(){{
-                           packetType = CONNECTION_ABORTED;
-                           reason = WRONG_PASSWORD;
-                           isEncoded = false;
-                      }});
-                      return;
-                   }
-
-                   if (GateAPI.getGateServer().clients.containsKey(name)){
-                       gatePacket(new ConnectionInfoPacket(){{
-                           packetType = CONNECTION_ABORTED;
-                           reason = "Server with this name already is connected";
-                           isEncoded = false;
-                       }});
-                       return;
-                   }
-
-                   /*Sending message to Client to confirm successful Connection*/
-                   gatePacket(new ConnectionInfoPacket(){{
-                       packetType = CONNECTION_CONNECTED;
-                       isEncoded = false;
-                   }});
-                   GateAPI.getGateServer().clients.put(name, this);
-
-                   StarGate.getInstance().getLogger().info("§aNew client connected: §6"+name);
-                   StarGate.getInstance().getLogger().info("§aADDRESS: §e"+socket.getInetAddress().toString().replace("/", "")+":"+socket.getPort());
-                   break;
-               }
-            }
-
-            GateAPI.ping(name);
-
-            while (true) {
-                /* This should prevent higher CPU usage*/
-                if (socket.getInputStream().available() < 0){
-                    continue;
-                }
-                String line = in.readLine();
-                if (line == null) continue;
-
+            if (time < 0) {
                 try {
-                    StarGatePacket packet;
-
-                    if ((packet = GateAPI.getGateServer().processPacket(name, line)) == null){
-                        StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet !");
-                    }else {
-                        if (packet instanceof ConnectionInfoPacket){
-                            if (((ConnectionInfoPacket) packet).packetType == ConnectionInfoPacket.CONNECTION_CLOSED){
-                                String reason = ((ConnectionInfoPacket) packet).reason;
-                                closeReason = (reason == null) ? closeReason : reason;
-                                break;
-                            }
-                        }
-                    }
-                }catch (Exception e){
-                    StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
-                    StarGate.getInstance().getLogger().info("§c"+e.getStackTrace()[0].getLineNumber());
+                    Thread.sleep(Math.max(25, -time));
+                } catch (InterruptedException e) {
+                    StarGate.getInstance().getLogger().warning("§eError appear while ticking StarGate Client!");
                 }
             }
 
-        } catch(IOException i) {
-            StarGate.getInstance().getLogger().info("§cERROR: Connection with §6"+name+"§c has been aborted!");
-            System.out.println(i.getMessage());
-        } finally {
-            GateAPI.getGateServer().clients.remove(name);
-            StarGate.getInstance().getLogger().info("§cWARNING: Connection with §6"+name+"§c has been closed!");
-            StarGate.getInstance().getLogger().info("§cReason: §4"+closeReason);
+            if (!this.tick()){
+                StarGate.getInstance().getLogger().warning("§eSomething bad happened! Closing client §6"+this.name+"§e!");
+                this.shutdown();
+            }
 
-            try {
-                in.close();
-                out.close();
-                socket.close();
-            } catch(Exception e) {}
+            this.nextTick += 50;
+        }
+
+        try {
+            this.in.close();
+            this.out.close();
+            this.socket.close();
+        }catch (Exception e){
+            //ignore
         }
     }
 
-    public boolean reconnect(){
-        StarGate.getInstance().getLogger().info("§cWARNING: Reconnecting §6"+name+"§c!");
-        try {
-            gatePacket(new ConnectionInfoPacket(){{
-                packetType = CONNECTION_RECONNECT;
-                isEncoded = false;
-            }});
-
-            /* We give some small time for client to make him receive message
-            * and prepare for reconnecting*/
-            Thread.sleep(450);
-
-            in.close();
-            out.close();
-            socket.close();
-        } catch(Exception e) {
-            return  false;
+    /**
+     * Returns if loop should be continued
+     * @return boolean
+     */
+    private boolean tick(){
+        if (!this.isAuthenticated()){
+            try {
+                this.authenticate();
+            }catch (IOException e){
+                return false;
+            }
+            return true;
         }
+
+        try {
+            String line = in.readLine();
+            if (line == null) return true;
+
+            StarGatePacket packet = GateAPI.getGateServer().processPacket(name, line);
+            if (packet == null) {
+                StarGate.getInstance().getLogger().info("§cWARNING: Unknown packet!");
+                return true;
+            }
+
+            if (packet instanceof ConnectionInfoPacket && ((ConnectionInfoPacket) packet).packetType == ConnectionInfoPacket.CONNECTION_CLOSED) {
+                String reason = ((ConnectionInfoPacket) packet).reason;
+                this.closeReason = (reason == null) ? closeReason : reason;
+                this.shutdown();
+                return true;
+            }
+
+        }catch (Exception e){
+            StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
+            StarGate.getInstance().getLogger().info("§c" + e.getMessage());
+            return false;
+        }
+
         return true;
     }
 
-    public String gatePacket(StarGatePacket packet){
+    private void authenticate() throws IOException {
+        String handshake = this.in.readLine();
+        if (!handshake.startsWith("CHEVRON:") || handshake.length() <= 8) return;
+
+        String[] handshakeData = handshake.substring(8).split(":");
+        name = handshakeData[0];
+
+        /* Password not set*/
+        if (handshakeData.length < 2 || !handshakeData[1].equals(Server.password)) {
+            StarGate.getInstance().getLogger().warning("§aNew client attends to connect: §6" + name);
+            StarGate.getInstance().getLogger().warning("§cClient not authenticated! Wrong password!");
+
+            this.gatePacket(new ConnectionInfoPacket() {{
+                packetType = CONNECTION_ABORTED;
+                reason = WRONG_PASSWORD;
+                isEncoded = false;
+            }});
+
+            this.shutdown();
+            return;
+        }
+
+        if (GateAPI.getGateServer().clients.containsKey(name)) {
+            this.gatePacket(new ConnectionInfoPacket() {{
+                packetType = CONNECTION_ABORTED;
+                reason = "Server with this name already is connected";
+                isEncoded = false;
+            }});
+
+            this.shutdown();
+            return;
+        }
+
+        /*Sending message to Client to confirm successful Connection*/
+        this.gatePacket(new ConnectionInfoPacket() {{
+            packetType = CONNECTION_CONNECTED;
+            isEncoded = false;
+        }});
+
+        GateAPI.getGateServer().clients.put(name, this);
+        GateAPI.ping(name);
+
+        StarGate.getInstance().getLogger().info("§aNew client connected: §6" + name + " §aThread: §6" + Thread.currentThread().getName());
+        StarGate.getInstance().getLogger().info("§aADDRESS: §e" + socket.getInetAddress().toString().replace("/", "") + ":" + socket.getPort());
+
+        this.authenticated = true;
+    }
+
+
+    public boolean reconnect() {
+        StarGate.getInstance().getLogger().info("§cWARNING: Reconnecting §6" + name + "§c!");
+        this.gatePacket(new ConnectionInfoPacket() {{
+            packetType = CONNECTION_RECONNECT;
+            isEncoded = false;
+        }});
+
+        /* We give some small time for client to make him receive message
+         * and prepare for reconnecting*/
+        try {
+            Thread.sleep(450);
+        } catch (Exception e) {
+            return false;
+        }
+
+        this.authenticated = false;
+        this.shutdown();
+        return true;
+    }
+
+    public String gatePacket(StarGatePacket packet) {
         String packetString;
         if (!packet.isEncoded) {
             packet.encode();
@@ -159,10 +200,26 @@ class Handler implements Runnable {
         String uuid = UUID.randomUUID().toString();
 
         try {
-            out.println(packetString +"!"+ uuid);
-        }catch (Exception e){
+            this.out.println(packetString + "!" + uuid);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return  uuid;
+        return uuid;
+    }
+
+    public void shutdown(){
+        this.isRunning = false;
+
+        GateAPI.getGateServer().clients.remove(name);
+        StarGate.getInstance().getLogger().info("§cWARNING: Connection with §6"+name+"§c has been closed!");
+        StarGate.getInstance().getLogger().info("§cReason: §4"+closeReason);
+    }
+
+    public boolean isShutdown(){
+        return this.isRunning;
+    }
+
+    public boolean isAuthenticated() {
+        return this.authenticated;
     }
 }
