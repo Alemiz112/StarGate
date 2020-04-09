@@ -30,7 +30,6 @@ public class Server {
     protected static int maxConn = 50;
     protected static String password = "123456789";
 
-
     protected Map<String, Handler> clients = new HashMap<>();
     protected Map<Integer, StarGatePacket> packets = new HashMap<>();
 
@@ -44,9 +43,9 @@ public class Server {
 
         gateAPI = new GateAPI(this);
 
-        initConfig();
-        initPackets();
-        start();
+        this.initConfig();
+        this.initPackets();
+        this.start();
     }
 
     public static Server getInstance(){
@@ -64,27 +63,29 @@ public class Server {
                 return thread;
             }
         };
-        this.clientPool = Executors.newFixedThreadPool(50, threadFactory);
+        this.clientPool = Executors.newFixedThreadPool(maxConn, threadFactory);
 
 
         Runnable serverTask = new Runnable(){
             @Override
             public void run() {
-                try (ServerSocket listener = new ServerSocket(47007)) {
+                try (ServerSocket listener = new ServerSocket(port)) {
                     plugin.getLogger().info("§cDone! §aStarGate Protocol is successfully running. Waiting for clients...");
                     while (true) {
                         Handler client = new Handler(listener.accept());
                         clientPool.execute(client);
-                    }
-                }catch (IOException e) {
 
+                        /* There is no need to check for delay. Just sleep*/
+                        Thread.sleep(50);
+                    }
+                }catch (Exception e) {
+                    //ignore
                 }
             }
         };
 
         /* Here we are creating new Thread for Server only
         * Every client has its own Thread*/
-
         serverThread = new Thread(serverTask, "StarGate Server");
         serverThread.start();
 
@@ -147,7 +148,6 @@ public class Server {
                 long actualTime = System.nanoTime();
                 long startTime = Long.decode(data[1]);
 
-                //long ping = (actualTime-startTime) / 1_000_000_000; => Old Format
                 long ping = TimeUnit.NANOSECONDS.toMillis((actualTime-startTime));
 
                 data[1] = Long.toString(ping);
