@@ -1,6 +1,7 @@
 package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.docker.DockerPacketHandler;
 import alemiz.stargate.gate.events.CustomPacketEvent;
 import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.gate.tasks.PingTask;
@@ -11,6 +12,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.*;
@@ -108,6 +110,10 @@ public class Server {
         GateAPI.RegisterPacket(new PlayerOnlinePacket());
         GateAPI.RegisterPacket(new ForwardPacket());
         GateAPI.RegisterPacket(new ConnectionInfoPacket());
+
+        if (plugin.cfg.getBoolean("dynamicServers")){
+            GateAPI.RegisterPacket(new ServerManagePacket());
+        }
     }
 
     private void initConfig(){
@@ -160,7 +166,13 @@ public class Server {
                 break;
         }
 
-        packet.decode();
+        try {
+            packet.decode();
+        }catch (Exception e){
+            plugin.getLogger().warning("§eUnable to decode packet with ID "+packet.getID());
+            plugin.getLogger().warning("§c"+e.getMessage());
+            return packet;
+        }
 
         if (!(packet instanceof ConnectionInfoPacket)){
             handlePacket(client, packet);
@@ -265,7 +277,21 @@ public class Server {
 
                 handler.getOut().println(data);
                 break;
-
+            case Packets.SERVER_MANAGE_PACKET:
+                switch (((ServerManagePacket) packet).getPacketType()){
+                    case ServerManagePacket.SERVER_ADD:
+                        gateAPI.addServer((ServerManagePacket) packet, client);
+                        break;
+                    case ServerManagePacket.SERVER_REMOVE:
+                        gateAPI.removeServer((ServerManagePacket) packet, client);
+                        break;
+                    default:
+                        if (this.plugin.cfg.getBoolean("handleDockerizedPackets")){
+                            DockerPacketHandler.handle((ServerManagePacket) packet, client);
+                        }
+                        break;
+                }
+                break;
             default:
                 /** Here we call Event that will send packet to DEVs plugin*/
                 plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));

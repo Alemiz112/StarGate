@@ -9,3 +9,12 @@ maxConnections: 50
 
 #To make connection secure enough set strong password
 password: "123456789"
+
+#If you are not interested turn it off
+dynamicServers: true
+
+#If you wish to manage servers inside Docker Containers
+handleDockerizedPackets: true
+dockerHosts:
+  default: "0.0.0.0:2375"
+  second: "192.168.0.50:2375"

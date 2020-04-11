@@ -1,7 +1,13 @@
 package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.packets.ServerManagePacket;
 import alemiz.stargate.gate.packets.StarGatePacket;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class GateAPI {
 
@@ -53,6 +59,41 @@ public class GateAPI {
         }catch (Exception e){
             StarGate.getInstance().getLogger().info("§cWARNING: Error while sending response to  "+client+" => "+e.getMessage());
         }
+    }
+
+    /* Simple way to add or remove server into server pool and allow players join*/
+    public static ServerInfo addServer(String name, SocketAddress address, String motd){
+        ProxyServer proxy = ProxyServer.getInstance();
+        ServerInfo server = proxy.constructServerInfo(name, address, motd, false, true, "default");
+        proxy.getServers().put(name, server);
+
+        return server;
+    }
+
+    public static boolean removeServer(String server){
+        return ProxyServer.getInstance().getServers().remove(server) == null;
+    }
+
+    /* Implemented method of static addServer() to add server and send response back to client*/
+    protected void addServer(ServerManagePacket packet, String client){
+        InetSocketAddress address;
+
+        try {
+            address = new InetSocketAddress(packet.getServerAddress(), Integer.parseInt(packet.getServerPort()));
+        }catch (Exception e){
+            StarGate.getInstance().getLogger().warning("ERROR: Unable to create InetAddress!");
+            packet.setResponse(client, "STATUS_FAILED");
+            return;
+        }
+
+        ServerInfo server = addServer(packet.getServerName(), address, packet.getServerAddress());
+        packet.setResponse(client, "STATUS_SUCCESS,"+server.getName());
+    }
+
+    /* Implemented method of static removeServer() to remove server from pool*/
+    protected void removeServer(ServerManagePacket packet, String client){
+        boolean success = removeServer(packet.getServerName());
+        packet.setResponse(client, (success? "STATUS_SUCCESS" : "STATUS_NOT_FOUND"));
     }
 
     public static  boolean isConnected(String client){

@@ -1,7 +1,7 @@
 package alemiz.stargate.gate.packets;
 
 import alemiz.stargate.untils.gateprotocol.Convertor;
-import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class KickPacket extends StarGatePacket {
@@ -18,7 +18,7 @@ public class KickPacket extends StarGatePacket {
         isEncoded = false;
 
         String[] data = Convertor.getPacketStringData(encoded);
-        player = BungeeCord.getInstance().getPlayer(data[1]);
+        player = ProxyServer.getInstance().getPlayer(data[1]);
         reason = data[2];
     }
 

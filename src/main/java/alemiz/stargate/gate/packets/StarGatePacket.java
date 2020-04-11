@@ -30,7 +30,7 @@ public abstract class StarGatePacket implements Cloneable{
      * Try to inspire by official packets*/
 
     public abstract void encode();
-    public abstract void decode();
+    public abstract void decode() throws Exception;
 
     public abstract StarGatePacket copy() throws CloneNotSupportedException;
 
@@ -41,6 +41,10 @@ public abstract class StarGatePacket implements Cloneable{
     public StarGatePacket(String type, int ID){
         this.type = type;
         this.ID = ID;
+    }
+
+    public void setResponse(String client, String response){
+        GateAPI.setResponse(client, this.uuid, response);
     }
 
     /* Put packet to server*/

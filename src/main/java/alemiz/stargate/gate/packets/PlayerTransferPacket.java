@@ -1,9 +1,8 @@
 package alemiz.stargate.gate.packets;
 
 import alemiz.stargate.untils.gateprotocol.Convertor;
-import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
 
 public class PlayerTransferPacket extends StarGatePacket {
 
@@ -19,7 +18,7 @@ public class PlayerTransferPacket extends StarGatePacket {
         isEncoded = false;
 
         String[] data = Convertor.getPacketStringData(encoded);
-        player = BungeeCord.getInstance().getPlayer(data[1]);
+        player = ProxyServer.getInstance().getPlayer(data[1]);
         destination = data[2];
     }
 
