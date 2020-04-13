@@ -97,7 +97,7 @@ class Handler implements Runnable {
 
         try {
             String line = in.readLine();
-            if (line == null) return true;
+            if (line == null || line.equals("GATE_STATUS")) return true;
 
             StarGatePacket packet = GateAPI.getGateServer().processPacket(name, line);
             if (packet == null) {
@@ -113,9 +113,14 @@ class Handler implements Runnable {
             }
 
         }catch (Exception e){
-            StarGate.getInstance().getLogger().info("§cERROR: Problem appears while processing packet!");
-            StarGate.getInstance().getLogger().info("§c" + e.getMessage());
-            return false;
+            StringBuilder report = new StringBuilder("§cERROR: Problem appears while processing packet!\n");
+            report.append("§c").append(e.getLocalizedMessage()).append("\n");
+
+            for (StackTraceElement line : e.getStackTrace()){
+                report.append("§4").append(line).append("\n");
+            }
+
+            StarGate.getInstance().getLogger().info(report.toString());
         }
 
         return true;

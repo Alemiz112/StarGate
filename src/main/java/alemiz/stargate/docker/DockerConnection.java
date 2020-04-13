@@ -2,6 +2,7 @@ package alemiz.stargate.docker;
 
 import alemiz.stargate.StarGate;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -63,33 +64,40 @@ public class DockerConnection {
             }
         }
 
-        HostConfig hostConfig = HostConfig.newHostConfig()
-                .withPortBindings(portBindings);
-
-        CreateContainerResponse container = this.client.createContainerCmd(image)
+        CreateContainerCmd cmd = this.client.createContainerCmd(image)
                 .withTty(true)
                 .withStdinOpen(true)
                 .withExposedPorts(exposedList)
-                .withHostConfig(hostConfig)
-                .withEnv(envVariables)
-                .exec();
+                .withHostConfig(HostConfig.newHostConfig().withPortBindings(portBindings));
+        if (envVariables != null) cmd.withEnv(envVariables);
 
+        CreateContainerResponse container = cmd.exec();
         this.startContainer(container.getId());
         return container.getId();
     }
 
     public void removeContainer(String id, boolean removeVolumes){
-        this.client.removeContainerCmd(id)
-                .withRemoveVolumes(removeVolumes)
-                .exec();
+        try {
+            this.client.removeContainerCmd(id).withRemoveVolumes(removeVolumes).exec();
+        }catch (Exception e){
+            this.plugin.getLogger().warning("§eWarning: Bad container ID! Unknown ID: "+id);
+        }
     }
 
     public void startContainer(String id){
-        this.client.startContainerCmd(id).exec();
+        try {
+            this.client.startContainerCmd(id).exec();
+        }catch (Exception e){
+            this.plugin.getLogger().warning("§eWarning: Bad container ID! Unknown ID: "+id);
+        }
     }
 
     public void stopContainer(String id){
-        this.client.stopContainerCmd(id).exec();
+        try {
+            this.client.stopContainerCmd(id).exec();
+        }catch (Exception e){
+            this.plugin.getLogger().warning("§eWarning: Bad container ID! Unknown ID: "+id);
+        }
     }
 
     public DockerClient getClient() {

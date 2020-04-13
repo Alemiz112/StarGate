@@ -3,6 +3,7 @@ package alemiz.stargate.gate;
 import alemiz.stargate.StarGate;
 import alemiz.stargate.docker.DockerPacketHandler;
 import alemiz.stargate.gate.events.CustomPacketEvent;
+import alemiz.stargate.gate.events.PacketPreHandleEvent;
 import alemiz.stargate.gate.packets.*;
 import alemiz.stargate.gate.tasks.PingTask;
 import alemiz.stargate.untils.gateprotocol.Convertor;
@@ -11,8 +12,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.*;
@@ -171,6 +170,11 @@ public class Server {
         }catch (Exception e){
             plugin.getLogger().warning("§eUnable to decode packet with ID "+packet.getID());
             plugin.getLogger().warning("§c"+e.getMessage());
+            return packet;
+        }
+
+        PacketPreHandleEvent event = plugin.getProxy().getPluginManager().callEvent(new PacketPreHandleEvent(client, packet));
+        if (event.isCancelled()){
             return packet;
         }
 

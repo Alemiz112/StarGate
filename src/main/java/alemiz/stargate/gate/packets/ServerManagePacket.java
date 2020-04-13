@@ -54,7 +54,9 @@ public class ServerManagePacket extends StarGatePacket {
                 this.serverName = data[4];
                 this.containerImage = data[5];
                 this.exposedPorts = data[6].split(",");
-                this.exposedPorts = data[7].split(",");
+                if (data.length > 8){
+                    this.envVariables = data[7].split(",");
+                }
                 if (data.length > 9){
                     this.dockerHost = data[8];
                 }
@@ -90,7 +92,7 @@ public class ServerManagePacket extends StarGatePacket {
                 convertor.putString(this.serverName);
                 convertor.putString(this.containerImage);
                 convertor.putString(String.join(",", this.exposedPorts));
-                convertor.putString(String.join(",", this.envVariables));
+                if (this.envVariables != null) convertor.putString(String.join(",", this.envVariables));
                 if (this.dockerHost != null) convertor.putString(dockerHost);
                 break;
             case DOCKER_REMOVE:
