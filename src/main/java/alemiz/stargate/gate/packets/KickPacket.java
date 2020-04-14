@@ -1,13 +1,11 @@
 package alemiz.stargate.gate.packets;
 
 import alemiz.stargate.untils.gateprotocol.Convertor;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class KickPacket extends StarGatePacket {
 
     public String reason;
-    public ProxiedPlayer player;
+    public String player;
 
     public KickPacket(){
         super("KICK_PACKET", Packets.KICK_PACKET);
@@ -18,7 +16,7 @@ public class KickPacket extends StarGatePacket {
         isEncoded = false;
 
         String[] data = Convertor.getPacketStringData(encoded);
-        player = ProxyServer.getInstance().getPlayer(data[1]);
+        player = data[1];
         reason = data[2];
     }
 
@@ -26,7 +24,7 @@ public class KickPacket extends StarGatePacket {
     public void encode() {
         Convertor convertor = new Convertor(getID());
 
-        convertor.putString(player.getName());
+        convertor.putString(player);
         convertor.putString(reason);
 
         this.encoded = convertor.getPacketString();
@@ -38,7 +36,7 @@ public class KickPacket extends StarGatePacket {
         return null;
     }
 
-    public ProxiedPlayer getPlayer() {
+    public String getPlayer() {
         return player;
     }
 

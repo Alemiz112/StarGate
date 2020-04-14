@@ -1,16 +1,14 @@
 package alemiz.stargate.gate.packets;
 
 import alemiz.stargate.untils.gateprotocol.Convertor;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class PlayerTransferPacket extends StarGatePacket {
 
-    public ProxiedPlayer player;
+    public String player;
     public String destination;
 
     public PlayerTransferPacket(){
-        super("PLAYER_TRANSFORM_PACKET", Packets.PLAYER_TRANSFORM_PACKET);
+        super("PLAYER_TRANSFER_PACKET", Packets.PLAYER_TRANSFER_PACKET);
     }
 
     @Override
@@ -18,7 +16,7 @@ public class PlayerTransferPacket extends StarGatePacket {
         isEncoded = false;
 
         String[] data = Convertor.getPacketStringData(encoded);
-        player = ProxyServer.getInstance().getPlayer(data[1]);
+        player = data[1];
         destination = data[2];
     }
 
@@ -26,7 +24,7 @@ public class PlayerTransferPacket extends StarGatePacket {
     public void encode() {
         Convertor convertor = new Convertor(getID());
 
-        convertor.putString(player.getName());
+        convertor.putString(player);
         convertor.putString(destination);
 
         this.encoded = convertor.getPacketString();
@@ -38,7 +36,7 @@ public class PlayerTransferPacket extends StarGatePacket {
         return null;
     }
 
-    public ProxiedPlayer getPlayer() {
+    public String getPlayer() {
         return player;
     }
 

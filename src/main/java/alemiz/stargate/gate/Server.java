@@ -218,9 +218,9 @@ public class Server {
                     clients.remove(client);
                 }
                 break;
-            case Packets.PLAYER_TRANSFORM_PACKET:
+            case Packets.PLAYER_TRANSFER_PACKET:
                 PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;
-                player = transferPacket.getPlayer();
+                player = ProxyServer.getInstance().getPlayer(transferPacket.getPlayer());
 
                 if (player == null){
                     plugin.getLogger().info("§cWARNING: §bTransfer Packet => Player not found!");
@@ -239,7 +239,7 @@ public class Server {
                 break;
             case Packets.KICK_PACKET:
                 KickPacket kickPacket = (KickPacket) packet;
-                player = kickPacket.getPlayer();
+                player = ProxyServer.getInstance().getPlayer(kickPacket.getPlayer());
 
                 if (player == null){
                     plugin.getLogger().info("§cWARNING: §bKick Packet => Player not found!");
