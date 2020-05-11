@@ -5,6 +5,7 @@ import alemiz.stargate.gate.Handler;
 import alemiz.stargate.gate.Server;
 
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class PingCheckTask extends TimerTask {
 
@@ -17,8 +18,14 @@ public class PingCheckTask extends TimerTask {
     @Override
     public void run() {
         Handler client = Server.getInstance().getClients().get(this.client);
-        System.out.println(Server.getInstance().getPingHistory().get(this.client));
-        if (client == null || Server.getInstance().shiftPing(this.client) == null) return;
+        Long received = Server.getInstance().shiftPing(this.client);
+
+        if (client == null || received == null) return;
+        long now = System.currentTimeMillis();
+        long delay = TimeUnit.SECONDS.toMillis(Server.PING_DELAY);
+        long ping = (now - received)/2;
+
+        if (ping <= delay) return;
 
         StarGate plugin = StarGate.getInstance();
         plugin.getLogger().info("§bConnection with §e"+this.client+" §b is slow! Pong was not received!");

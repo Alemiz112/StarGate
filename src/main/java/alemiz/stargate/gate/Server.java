@@ -98,7 +98,7 @@ public class Server {
 
         /* Launching PingTask is very easy
         * Just set delay (in seconds) and launch task*/
-        long interval = PING_DELAY * 1000;
+        long interval = 30 * 1000;
         Timer timer = new Timer();
         timer.schedule(new PingTask(), 0, interval);
     }
@@ -197,12 +197,12 @@ public class Server {
             case Packets.PING_PACKET:
                 long delay = TimeUnit.SECONDS.toMillis(PING_DELAY);
                 long now = System.currentTimeMillis();
-                Long sent = pingHistory.remove(client);
+                Long received = pingHistory.remove(client);
 
-                if (sent == null) break;
-                long ping = (now - sent)/2;
+                if (received == null) break;
+                long ping = (now - received)/2;
 
-                plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
+                //plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
 
                 if (ping > delay){
                     plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
