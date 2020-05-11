@@ -63,4 +63,9 @@ public abstract class StarGatePacket implements Cloneable{
     public String getUuid() {
         return uuid;
     }
+
+    @Override
+    public String toString() {
+        return "StarGatePacket{type='" + type + "', encoded='" + encoded + "', uuid='" + uuid + "'}";
+    }
 }

@@ -31,7 +31,13 @@ public class Server {
     protected static int maxConn = 50;
     protected static String password = "123456789";
 
+    /**
+     * Ping delay in seconds
+     */
+    public static final long PING_DELAY = 20;
+
     protected Map<String, Handler> clients = new HashMap<>();
+    protected Map<String, Long> pingHistory = new HashMap<>();
     protected Map<Integer, StarGatePacket> packets = new HashMap<>();
 
     private final AtomicLong threadIndex = new AtomicLong(0);
@@ -91,8 +97,8 @@ public class Server {
         serverThread.start();
 
         /* Launching PingTask is very easy
-        * Just set delay (60seconds) and launch task*/
-        long interval = 60 * 1000;
+        * Just set delay (in seconds) and launch task*/
+        long interval = PING_DELAY * 1000;
         Timer timer = new Timer();
         timer.schedule(new PingTask(), 0, interval);
     }
@@ -197,13 +203,16 @@ public class Server {
                 plugin.getLogger().info("§bUSAGE: §e"+welcomePacket.usage+"%§b TPS: §e"+welcomePacket.tps+" §bPLAYERS: §e"+welcomePacket.players);
                 break;
             case Packets.PING_PACKET:
-                PingPacket pingPacket = (PingPacket) packet;
-                long delay = TimeUnit.SECONDS.toMillis(30);
-                long ping = Convertor.getInt(pingPacket.getPingData());
+                long delay = TimeUnit.SECONDS.toMillis(PING_DELAY);
+                long now = System.currentTimeMillis();
+                Long sent = pingHistory.remove(client);
 
-                //plugin.getLogger().info("§bPING: §e"+ ping+"ms");
+                if (sent == null) break;
+                long ping = (now - sent)/2;
 
-                if ((ping/2) > delay){
+                //plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
+
+                if (ping > delay){
                     plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
 
                     try {
@@ -317,5 +326,9 @@ public class Server {
     /* Server Data*/
     public Map<String, Handler> getClients() {
         return clients;
+    }
+
+    public Map<String, Long> getPingHistory() {
+        return pingHistory;
     }
 }

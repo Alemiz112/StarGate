@@ -8,7 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.UUID;
 
-class Handler implements Runnable {
+public class Handler implements Runnable {
 
     private Socket socket;
     private BufferedReader in;
@@ -113,6 +113,12 @@ class Handler implements Runnable {
             }
 
         }catch (Exception e){
+            if (e.getMessage().equals("Connection reset")){
+                this.closeReason = "Connection reset";
+                this.shutdown();
+                return true;
+            }
+
             StringBuilder report = new StringBuilder("§cERROR: Problem appears while processing packet!\n");
             report.append("§c").append(e.getLocalizedMessage()).append("\n");
 

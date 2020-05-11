@@ -3,11 +3,13 @@ package alemiz.stargate.gate;
 import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.packets.ServerManagePacket;
 import alemiz.stargate.gate.packets.StarGatePacket;
+import alemiz.stargate.gate.tasks.PingCheckTask;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Timer;
 
 public class GateAPI {
 
@@ -32,9 +34,14 @@ public class GateAPI {
     public static void ping(String client){
         if (!gateServer.clients.containsKey(client) || gateServer.clients.get(client) == null) return;
         Handler clientHandler = gateServer.clients.get(client);
+        if (clientHandler == null) return;
 
         try{
-            clientHandler.getOut().println("GATE_PING:" +System.nanoTime());
+            long now = System.currentTimeMillis();
+            clientHandler.getOut().println("GATE_PING");
+            gateServer.pingHistory.put(client, now);
+
+            new Timer().schedule(new PingCheckTask(client), Server.PING_DELAY * 1000);
         }catch (Exception e){
             StarGate.getInstance().getLogger().info("§cWARNING: Error while pinging "+client+" => "+e.getMessage());
         }
@@ -65,9 +72,7 @@ public class GateAPI {
     public static ServerInfo addServer(String name, SocketAddress address, String motd){
         ProxyServer proxy = ProxyServer.getInstance();
         ServerInfo server = proxy.constructServerInfo(name, address, motd, false, true, "default");
-        proxy.getServers().put(name, server);
-
-        return server;
+        return proxy.getServers().putIfAbsent(name, server);
     }
 
     public static boolean removeServer(String server){
@@ -96,7 +101,7 @@ public class GateAPI {
         packet.setResponse(client, (success? "STATUS_SUCCESS" : "STATUS_NOT_FOUND"));
     }
 
-    public static  boolean isConnected(String client){
+    public static boolean isConnected(String client){
         return gateServer.isConnected(client);
     }
 }
