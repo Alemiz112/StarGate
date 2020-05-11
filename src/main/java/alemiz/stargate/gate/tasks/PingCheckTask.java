@@ -23,12 +23,12 @@ public class PingCheckTask extends TimerTask {
         if (client == null || received == null) return;
         long now = System.currentTimeMillis();
         long delay = TimeUnit.SECONDS.toMillis(Server.PING_DELAY);
-        long ping = (now - received)/2;
+        long ping = (now - received);
 
         if (ping <= delay) return;
 
         StarGate plugin = StarGate.getInstance();
-        plugin.getLogger().info("§bConnection with §e"+this.client+" §b is slow! Pong was not received!");
+        plugin.getLogger().info("§bConnection with §e"+this.client+"§b is slow! Pong was not received!");
 
         try {
             if (!client.reconnect()){

@@ -34,7 +34,7 @@ public class Server {
     /**
      * Ping delay in seconds
      */
-    public static final long PING_DELAY = 30;
+    public static final long PING_DELAY = 25;
 
     protected Map<String, Handler> clients = new HashMap<>();
     protected Map<String, Long> pingHistory = new HashMap<>();
@@ -200,7 +200,7 @@ public class Server {
                 Long received = pingHistory.remove(client);
 
                 if (received == null) break;
-                long ping = (now - received)/2;
+                long ping = (now - received);
 
                 //plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
 
