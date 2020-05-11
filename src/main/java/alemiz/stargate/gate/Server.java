@@ -34,7 +34,7 @@ public class Server {
     /**
      * Ping delay in seconds
      */
-    public static final long PING_DELAY = 20;
+    public static final long PING_DELAY = 30;
 
     protected Map<String, Handler> clients = new HashMap<>();
     protected Map<String, Long> pingHistory = new HashMap<>();
@@ -152,19 +152,11 @@ public class Server {
         String uuid = data[data.length - 1];
 
 
-        /* Preprocessing official packets if its needed.
-        *  Great example is PingPacket - we receive NanoTime and converts it to MilliSeconds */
+        /*
+        * Preprocessing official packets if its needed.
+        * TODO: maybe pre-process event?
+        */
         switch (packet.getID()){
-            case Packets.PING_PACKET:
-                long actualTime = System.nanoTime();
-                long startTime = Long.decode(data[1]);
-
-                long ping = TimeUnit.NANOSECONDS.toMillis((actualTime-startTime));
-
-                data[1] = Long.toString(ping);
-
-                packet.encoded = Convertor.getPacketString(data);
-                break;
             default:
                 packet.uuid = uuid;
                 packet.encoded = packetString;
@@ -210,13 +202,13 @@ public class Server {
                 if (sent == null) break;
                 long ping = (now - sent)/2;
 
-                //plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
+                plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
 
                 if (ping > delay){
                     plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
 
                     try {
-                        Handler handler = clients.get(client);
+                        Handler handler = clients.remove(client);
                         if (!handler.reconnect()){
                             plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
                             plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
@@ -224,7 +216,6 @@ public class Server {
                     }catch (NullPointerException e){
                         plugin.getLogger().info("§cLooks like client §6"+client +"§c keeps already disconnected!");
                     }
-                    clients.remove(client);
                 }
                 break;
             case Packets.PLAYER_TRANSFER_PACKET:
@@ -330,5 +321,9 @@ public class Server {
 
     public Map<String, Long> getPingHistory() {
         return pingHistory;
+    }
+
+    public Long shiftPing(String client){
+        return pingHistory.remove(client);
     }
 }

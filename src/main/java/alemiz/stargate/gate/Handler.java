@@ -134,7 +134,7 @@ public class Handler implements Runnable {
 
     private void authenticate() throws IOException {
         String handshake = this.in.readLine();
-        if (!handshake.startsWith("CHEVRON:") || handshake.length() <= 8) return;
+        if (handshake == null || !handshake.startsWith("CHEVRON:") || handshake.length() <= 8) return;
 
         String[] handshakeData = handshake.substring(8).split(":");
         name = handshakeData[0];

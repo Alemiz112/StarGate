@@ -17,18 +17,19 @@ public class PingCheckTask extends TimerTask {
     @Override
     public void run() {
         Handler client = Server.getInstance().getClients().get(this.client);
-        if (client == null || Server.getInstance().getPingHistory().remove(this.client) == null) return;
+        System.out.println(Server.getInstance().getPingHistory().get(this.client));
+        if (client == null || Server.getInstance().shiftPing(this.client) == null) return;
 
         StarGate plugin = StarGate.getInstance();
-        plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Pong was not received!");
+        plugin.getLogger().info("§bConnection with §e"+this.client+" §b is slow! Pong was not received!");
 
         try {
             if (!client.reconnect()){
-                plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
-                plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
+                plugin.getLogger().info("§cERROR: Reconnecting with §6"+this.client+"§cwas interrupted!");
+                plugin.getLogger().info("§cTrying to establish new connection with §6"+this.client);
             }
         }catch (NullPointerException e){
-            plugin.getLogger().info("§cLooks like client §6"+client +"§c keeps already disconnected!");
+            plugin.getLogger().info("§cLooks like client §6"+this.client +"§c keeps already disconnected!");
         }
 
         Server.getInstance().getClients().remove(this.client);
