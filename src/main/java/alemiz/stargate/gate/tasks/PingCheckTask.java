@@ -1,6 +1,7 @@
 package alemiz.stargate.gate.tasks;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.GateAPI;
 import alemiz.stargate.gate.Handler;
 import alemiz.stargate.gate.Server;
 
@@ -27,9 +28,17 @@ public class PingCheckTask extends TimerTask {
 
         if (ping <= delay) return;
 
+        if (client.isStable()){
+            client.setStable(false);
+            GateAPI.ping(this.client);
+            return;
+        }
+
         StarGate plugin = StarGate.getInstance();
+        plugin.getLogger().info("§bPING: §e"+ ping+"ms");
         plugin.getLogger().info("§bConnection with §e"+this.client+"§b is slow! Pong was not received!");
 
+        Server.getInstance().getClients().remove(this.client);
         try {
             if (!client.reconnect()){
                 plugin.getLogger().info("§cERROR: Reconnecting with §6"+this.client+"§cwas interrupted!");
@@ -39,6 +48,5 @@ public class PingCheckTask extends TimerTask {
             plugin.getLogger().info("§cLooks like client §6"+this.client +"§c keeps already disconnected!");
         }
 
-        Server.getInstance().getClients().remove(this.client);
     }
 }

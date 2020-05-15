@@ -202,21 +202,25 @@ public class Server {
                 if (received == null) break;
                 long ping = (now - received);
 
-                //plugin.getLogger().info("§bPING: §e"+ ping+"ms §bNOW: §e"+now);
+                plugin.getLogger().info("§bPING: §e"+ ping+"ms");
 
-                if (ping > delay){
-                    plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
-
-                    try {
-                        Handler handler = clients.remove(client);
-                        if (!handler.reconnect()){
-                            plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
-                            plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
-                        }
-                    }catch (NullPointerException e){
-                        plugin.getLogger().info("§cLooks like client §6"+client +"§c keeps already disconnected!");
-                    }
+                if (ping <= delay){
+                    Handler handler = clients.get(client);
+                    handler.setStable(true);
+                    break;
                 }
+
+                plugin.getLogger().info("§bConnection with §e"+client+" §b is slow! Ping: §e"+ping+"ms");
+                try {
+                    Handler handler = clients.remove(client);
+                    if (!handler.reconnect()){
+                        plugin.getLogger().info("§cERROR: Reconnecting with §6"+client+"§cwas interrupted!");
+                        plugin.getLogger().info("§cTrying to establish new connection with §6"+client);
+                    }
+                }catch (NullPointerException e){
+                    plugin.getLogger().info("§cLooks like client §6"+client +"§c keeps already disconnected!");
+                }
+
                 break;
             case Packets.PLAYER_TRANSFER_PACKET:
                 PlayerTransferPacket transferPacket = (PlayerTransferPacket) packet;

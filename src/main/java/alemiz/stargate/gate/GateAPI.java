@@ -72,7 +72,8 @@ public class GateAPI {
     public static ServerInfo addServer(String name, SocketAddress address, String motd){
         ProxyServer proxy = ProxyServer.getInstance();
         ServerInfo server = proxy.constructServerInfo(name, address, motd, false, true, "default");
-        return proxy.getServers().putIfAbsent(name, server);
+        proxy.getServers().putIfAbsent(name, server);
+        return proxy.getServers().get(name);
     }
 
     public static boolean removeServer(String server){

@@ -22,6 +22,7 @@ public class Handler implements Runnable {
     private long nextTick;
 
     private boolean isRunning = true;
+    private boolean stable = true;
 
 
     public Handler(Socket socket) {
@@ -113,14 +114,14 @@ public class Handler implements Runnable {
             }
 
         }catch (Exception e){
-            if (e.getMessage().equals("Connection reset")){
+            if (e.getLocalizedMessage() != null && e.getLocalizedMessage().equals("Connection reset")){
                 this.closeReason = "Connection reset";
                 this.shutdown();
                 return true;
             }
 
             StringBuilder report = new StringBuilder("§cERROR: Problem appears while processing packet!\n");
-            report.append("§c").append(e.getLocalizedMessage()).append("\n");
+            report.append("§c").append(e.getClass().getName()).append(":").append(e.getLocalizedMessage()).append("\n");
 
             for (StackTraceElement line : e.getStackTrace()){
                 report.append("§4").append(line).append("\n");
@@ -232,5 +233,17 @@ public class Handler implements Runnable {
 
     public boolean isAuthenticated() {
         return this.authenticated;
+    }
+
+
+    /**
+     *  Returns if last ping was successful
+     */
+    public boolean isStable() {
+        return stable;
+    }
+
+    public void setStable(boolean stable) {
+        this.stable = stable;
     }
 }
