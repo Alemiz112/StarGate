@@ -35,7 +35,7 @@ public class PingCheckTask extends TimerTask {
         }
 
         StarGate plugin = StarGate.getInstance();
-        plugin.getLogger().info("§bPING: §e"+ ping+"ms");
+        //plugin.getLogger().info("§bPING: §e"+ ping+"ms");
         plugin.getLogger().info("§bConnection with §e"+this.client+"§b is slow! Pong was not received!");
 
         Server.getInstance().getClients().remove(this.client);

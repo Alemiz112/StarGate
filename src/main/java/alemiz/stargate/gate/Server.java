@@ -202,7 +202,7 @@ public class Server {
                 if (received == null) break;
                 long ping = (now - received);
 
-                plugin.getLogger().info("§bPING: §e"+ ping+"ms");
+                //plugin.getLogger().info("§bPING: §e"+ ping+"ms");
 
                 if (ping <= delay){
                     Handler handler = clients.get(client);
