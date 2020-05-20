@@ -155,14 +155,16 @@ public class Handler implements Runnable {
             return;
         }
 
-        if (GateAPI.getGateServer().clients.containsKey(name)) {
-            this.gatePacket(new ConnectionInfoPacket() {{
-                packetType = CONNECTION_ABORTED;
-                reason = "Server with this name already is connected";
-                isEncoded = false;
-            }});
+        Handler client;
+        if (GateAPI.getGateServer().clients.containsKey(name) && (client = GateAPI.getGateServer().clients.get(name)) != null) {
+            ConnectionInfoPacket packet = new ConnectionInfoPacket(){{
+                packetType = CONNECTION_CLOSED;
+                reason = "Connected from another location";
+            }};
 
-            this.shutdown();
+            client.gatePacket(packet, true);
+            client.closeReason = "Connected from another location";
+            client.shutdown();
             return;
         }
 
@@ -202,7 +204,11 @@ public class Handler implements Runnable {
         return true;
     }
 
-    public String gatePacket(StarGatePacket packet) {
+    public String gatePacket(StarGatePacket packet){
+        return this.gatePacket(packet, false);
+    }
+
+    public String gatePacket(StarGatePacket packet, boolean fireException) {
         String packetString;
         if (!packet.isEncoded) {
             packet.encode();
@@ -214,7 +220,7 @@ public class Handler implements Runnable {
         try {
             this.out.println(packetString + "!" + uuid);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            if (!fireException) System.out.println(e.getMessage());
         }
         return uuid;
     }
