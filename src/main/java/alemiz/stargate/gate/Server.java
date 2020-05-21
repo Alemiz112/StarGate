@@ -36,7 +36,7 @@ public class Server {
      */
     public static final long PING_DELAY = 25;
 
-    protected Map<String, Handler> clients = new HashMap<>();
+    protected final Map<String, Handler> clients = new ConcurrentHashMap<>();
     protected Map<String, Long> pingHistory = new HashMap<>();
     protected Map<Integer, StarGatePacket> packets = new HashMap<>();
 

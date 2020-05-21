@@ -165,13 +165,11 @@ public class Handler implements Runnable {
             client.gatePacket(packet, true);
             client.closeReason = "Connected from another location";
             client.shutdown();
-            return;
         }
 
         /*Sending message to Client to confirm successful Connection*/
         this.gatePacket(new ConnectionInfoPacket() {{
             packetType = CONNECTION_CONNECTED;
-            isEncoded = false;
         }});
 
         GateAPI.getGateServer().clients.put(name, this);
