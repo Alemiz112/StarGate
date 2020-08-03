@@ -2,6 +2,8 @@ package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.docker.DockerPacketHandler;
+import alemiz.stargate.gate.client.ClientData;
+import alemiz.stargate.gate.client.Handler;
 import alemiz.stargate.gate.events.CustomPacketEvent;
 import alemiz.stargate.gate.events.PacketPreHandleEvent;
 import alemiz.stargate.gate.packets.*;
@@ -29,7 +31,7 @@ public class Server {
      */
     protected static int port = 47007;
     protected static int maxConn = 50;
-    protected static String password = "123456789";
+    public static String password = "123456789";
 
     /**
      * Ping delay in seconds
@@ -43,6 +45,8 @@ public class Server {
     private final AtomicLong threadIndex = new AtomicLong(0);
     protected ExecutorService clientPool;
     protected Thread serverThread;
+
+    protected final Map<String, ClientData> clientDataMap = new ConcurrentHashMap<>();
 
     public Server(StarGate plugin){
         instance = this;
@@ -98,9 +102,7 @@ public class Server {
 
         /* Launching PingTask is very easy
         * Just set delay (in seconds) and launch task*/
-        long interval = 30 * 1000;
-        Timer timer = new Timer();
-        timer.schedule(new PingTask(), 0, interval);
+        this.plugin.getProxy().getScheduler().schedule(this.plugin, new PingTask(), 30, 30, TimeUnit.SECONDS);
     }
 
     /**
@@ -140,7 +142,7 @@ public class Server {
     /* Using these function we can process packet from string to data
     *  After packet is successfully created we can handle that Packet*/
 
-    protected StarGatePacket processPacket(String client, String packetString) throws InstantiationException, IllegalAccessException{
+    public StarGatePacket processPacket(String client, String packetString) throws InstantiationException, IllegalAccessException{
         String[] data = Convertor.getPacketStringData(packetString);
         int PacketId = Integer.decode(data[0]);
 
@@ -177,7 +179,7 @@ public class Server {
         }
 
         if (!(packet instanceof ConnectionInfoPacket)){
-            handlePacket(client, packet);
+            this.handlePacket(client, packet);
         }
 
         return packet;
@@ -192,7 +194,8 @@ public class Server {
             case Packets.WELCOME_PACKET:
                 WelcomePacket welcomePacket = (WelcomePacket) packet;
                 plugin.getLogger().info("§bReceiving first data from §e"+welcomePacket.server);
-                plugin.getLogger().info("§bUSAGE: §e"+welcomePacket.usage+"%§b TPS: §e"+welcomePacket.tps+" §bPLAYERS: §e"+welcomePacket.players);
+                plugin.getLogger().info("§bUSAGE: §e"+welcomePacket.usage+"%§b TPS: §e"+welcomePacket.tps+" §bPLAYERS: §e"+welcomePacket.players+"/§6"+welcomePacket.maxPlayers);
+                this.updateClientData(welcomePacket);
                 break;
             case Packets.PING_PACKET:
                 long delay = TimeUnit.SECONDS.toMillis(PING_DELAY);
@@ -201,8 +204,6 @@ public class Server {
 
                 if (received == null) break;
                 long ping = (now - received);
-
-                //plugin.getLogger().info("§bPING: §e"+ ping+"ms");
 
                 if (ping <= delay){
                     Handler handler = clients.get(client);
@@ -319,15 +320,60 @@ public class Server {
     }
 
     /* Server Data*/
+    public Handler getClient(String clientName){
+        return this.clients.get(clientName);
+    }
+
+    public boolean registerClient(String clientName, Handler handler){
+        Handler oldHandler = this.clients.get(clientName);
+        if (oldHandler != null){
+            return false;
+        }
+
+        this.clients.put(clientName, handler);
+        return true;
+    }
+
+    public boolean unregisterClient(Handler handler){
+        if (handler == null) return false;
+        boolean success = this.clients.remove(handler.getName()) != null;
+
+        if (success){
+            this.clientDataMap.remove(handler.getName());
+            this.plugin.getLogger().info("§cWARNING: Connection with §6"+handler.getName()+"§c has been closed!");
+            this.plugin.getLogger().info("§cReason: §4"+handler.getCloseReason());
+        }
+        return success;
+    }
+
     public Map<String, Handler> getClients() {
-        return clients;
+        return this.clients;
+    }
+
+    public ClientData getClientData(String clientName){
+        return this.clientDataMap.get(clientName);
+    }
+
+    public void updateClientData(WelcomePacket packet){
+        this.updateClientData(packet.server, packet.maxPlayers);
+    }
+
+    public void updateClientData(String clientName, int onlinePlayers){
+        ClientData clientData = this.getClientData(clientName);
+        if (clientData == null){
+            clientData = new ClientData(clientName, onlinePlayers);
+        }else {
+            clientData.setMaxPlayers(onlinePlayers);
+        }
+
+        this.clientDataMap.put(clientName, clientData);
     }
 
     public Map<String, Long> getPingHistory() {
-        return pingHistory;
+        return this.pingHistory;
     }
 
     public Long shiftPing(String client){
-        return pingHistory.remove(client);
+        return this.pingHistory.remove(client);
     }
 }

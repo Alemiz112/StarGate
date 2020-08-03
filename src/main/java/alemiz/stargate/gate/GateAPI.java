@@ -1,6 +1,7 @@
 package alemiz.stargate.gate;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.client.Handler;
 import alemiz.stargate.gate.packets.ServerManagePacket;
 import alemiz.stargate.gate.packets.StarGatePacket;
 import alemiz.stargate.gate.tasks.PingCheckTask;
@@ -9,7 +10,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class GateAPI {
 
@@ -41,7 +42,7 @@ public class GateAPI {
             clientHandler.getOut().println("GATE_PING");
             gateServer.pingHistory.put(client, now);
 
-            new Timer().schedule(new PingCheckTask(client), Server.PING_DELAY * 1000);
+            ProxyServer.getInstance().getScheduler().schedule(StarGate.getInstance(), new PingCheckTask(client), Server.PING_DELAY, TimeUnit.SECONDS);
         }catch (Exception e){
             StarGate.getInstance().getLogger().info("§cWARNING: Error while pinging "+client+" => "+e.getMessage());
         }

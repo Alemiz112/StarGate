@@ -7,6 +7,7 @@ public class WelcomePacket extends StarGatePacket {
     public String server;
     public int tps;
     public int players;
+    public int maxPlayers;
     public int usage;
 
     public WelcomePacket(){
@@ -16,15 +17,16 @@ public class WelcomePacket extends StarGatePacket {
     @Override
     public void decode() {
         /* This is very important! Server will try to decode packet if it will be not set correctly
-        * And that can return unupdated packet*/
-        isEncoded = false;
+        * And that can return un-updated packet*/
+        this.isEncoded = false;
 
-        /* data[0] => ID*/
+        /* data[0] => ID */
         String[] data = Convertor.getPacketStringData(encoded);
         this.server = data[1];
-        this.tps = Integer.decode(data[2]);
-        this.usage = Integer.decode(data[3]);
-        this.players = Integer.decode(data[4]);
+        this.tps = Integer.parseInt(data[2]);
+        this.usage = Integer.parseInt(data[3]);
+        this.players = Integer.parseInt(data[4]);
+        this.maxPlayers = Integer.parseInt(data[5]);
     }
 
     /* Using @class Convertor we can create packetString from custom data
@@ -35,15 +37,15 @@ public class WelcomePacket extends StarGatePacket {
     @Override
     public void encode() {
         Convertor convertor = new Convertor(getID());
-        convertor.putString(server);
+        convertor.putString(this.server);
 
-        convertor.putInt(tps);
-        convertor.putInt(usage);
-
-        convertor.putInt(players);
+        convertor.putInt(this.tps);
+        convertor.putInt(this.usage);
+        convertor.putInt(this.players);
+        convertor.putInt(this.maxPlayers);
 
         this.encoded = convertor.getPacketString();
-        isEncoded = true;
+        this.isEncoded = true;
     }
 
     /* May be useful in feature references
@@ -52,11 +54,10 @@ public class WelcomePacket extends StarGatePacket {
     @Override
     public StarGatePacket copy() throws CloneNotSupportedException {
         WelcomePacket packet = (WelcomePacket) super.clone();
-        packet.players = players;
-        packet.server = server;
-        packet.tps = tps;
-        packet.usage = usage;
-
-        return  packet;
+        packet.players = this.players;
+        packet.server = this.server;
+        packet.tps = this.tps;
+        packet.usage = this.usage;
+        return packet;
     }
 }

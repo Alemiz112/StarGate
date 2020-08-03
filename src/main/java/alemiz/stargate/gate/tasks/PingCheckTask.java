@@ -2,13 +2,12 @@ package alemiz.stargate.gate.tasks;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.gate.GateAPI;
-import alemiz.stargate.gate.Handler;
+import alemiz.stargate.gate.client.Handler;
 import alemiz.stargate.gate.Server;
 
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class PingCheckTask extends TimerTask {
+public class PingCheckTask implements Runnable {
 
     private final String client;
 

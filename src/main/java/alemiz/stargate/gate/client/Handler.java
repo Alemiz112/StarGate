@@ -1,6 +1,8 @@
-package alemiz.stargate.gate;
+package alemiz.stargate.gate.client;
 
 import alemiz.stargate.StarGate;
+import alemiz.stargate.gate.GateAPI;
+import alemiz.stargate.gate.Server;
 import alemiz.stargate.gate.packets.ConnectionInfoPacket;
 import alemiz.stargate.gate.packets.StarGatePacket;
 
@@ -155,13 +157,13 @@ public class Handler implements Runnable {
             return;
         }
 
-        Handler client;
-        if (GateAPI.getGateServer().clients.containsKey(name) && (client = GateAPI.getGateServer().clients.get(name)) != null) {
+        if (!GateAPI.getGateServer().registerClient(name, this)) {
             ConnectionInfoPacket packet = new ConnectionInfoPacket(){{
                 packetType = CONNECTION_CLOSED;
                 reason = "Connected from another location";
             }};
 
+            Handler client = GateAPI.getGateServer().getClient(name);
             client.gatePacket(packet, true);
             client.closeReason = "Connected from another location";
             client.shutdown();
@@ -172,7 +174,6 @@ public class Handler implements Runnable {
             packetType = CONNECTION_CONNECTED;
         }});
 
-        GateAPI.getGateServer().clients.put(name, this);
         GateAPI.ping(name);
 
         StarGate.getInstance().getLogger().info("§aNew client connected: §6" + name + " §aThread: §6" + Thread.currentThread().getName());
@@ -225,10 +226,7 @@ public class Handler implements Runnable {
 
     public void shutdown(){
         this.isRunning = false;
-
-        GateAPI.getGateServer().clients.remove(name);
-        StarGate.getInstance().getLogger().info("§cWARNING: Connection with §6"+name+"§c has been closed!");
-        StarGate.getInstance().getLogger().info("§cReason: §4"+closeReason);
+        GateAPI.getGateServer().unregisterClient(this);
     }
 
     public boolean isShutdown(){
@@ -239,6 +237,13 @@ public class Handler implements Runnable {
         return this.authenticated;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public String getCloseReason() {
+        return this.closeReason;
+    }
 
     /**
      *  Returns if last ping was successful
