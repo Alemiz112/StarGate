@@ -167,6 +167,8 @@ public class Handler implements Runnable {
             client.gatePacket(packet, true);
             client.closeReason = "Connected from another location";
             client.shutdown();
+
+            GateAPI.getGateServer().registerClient(name, this);
         }
 
         /*Sending message to Client to confirm successful Connection*/

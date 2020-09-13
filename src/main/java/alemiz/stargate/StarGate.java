@@ -29,7 +29,7 @@ public class StarGate extends Plugin implements Listener{
         this.getLogger().info("§cRegistring StarGate Listener");
         getProxy().getPluginManager().registerListener(this, this);
 
-        server = new Server(this);
+        this.server = new Server(this);
     }
 
     public static StarGate getInstance() {
@@ -37,7 +37,7 @@ public class StarGate extends Plugin implements Listener{
     }
 
     public Server getServer() {
-        return server;
+        return this.server;
     }
 
     //CONFIG
@@ -59,7 +59,7 @@ public class StarGate extends Plugin implements Listener{
         }
 
         try {
-            cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
+            this.cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

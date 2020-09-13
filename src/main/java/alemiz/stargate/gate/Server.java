@@ -66,32 +66,27 @@ public class Server {
     public void start(){
         plugin.getLogger().info("§aStarting StarGate Protocol on Port: §2"+port);
 
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable);
-                thread.setName("StarGate client-" + threadIndex.getAndIncrement());
-                return thread;
-            }
+        ThreadFactory threadFactory = runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setName("StarGate client-" + threadIndex.getAndIncrement());
+            return thread;
         };
         this.clientPool = Executors.newFixedThreadPool(maxConn, threadFactory);
 
 
-        Runnable serverTask = new Runnable(){
-            @Override
-            public void run() {
-                try (ServerSocket listener = new ServerSocket(port)) {
-                    plugin.getLogger().info("§cDone! §aStarGate Protocol is successfully running. Waiting for clients...");
-                    while (true) {
-                        Handler client = new Handler(listener.accept());
-                        clientPool.execute(client);
+        Runnable serverTask = () -> {
+            try{
+                ServerSocket listener = new ServerSocket(port);
+                this.plugin.getLogger().info("§cDone! §aStarGate Protocol is successfully running. Waiting for clients...");
+                while (true) {
+                    Handler client = new Handler(listener.accept());
+                    this.clientPool.execute(client);
 
-                        /* There is no need to check for delay. Just sleep*/
-                        Thread.sleep(50);
-                    }
-                }catch (Exception e) {
-                    //ignore
+                    /* There is no need to check for delay. Just sleep*/
+                    Thread.sleep(50);
                 }
+            }catch (Exception e) {
+                //ignore
             }
         };
 
@@ -168,12 +163,12 @@ public class Server {
         try {
             packet.decode();
         }catch (Exception e){
-            plugin.getLogger().warning("§eUnable to decode packet with ID "+packet.getID());
-            plugin.getLogger().warning("§c"+e.getMessage());
+            this.plugin.getLogger().warning("§eUnable to decode packet with ID "+packet.getID());
+            this. plugin.getLogger().warning("§c"+e.getMessage());
             return packet;
         }
 
-        PacketPreHandleEvent event = plugin.getProxy().getPluginManager().callEvent(new PacketPreHandleEvent(client, packet));
+        PacketPreHandleEvent event = this.plugin.getProxy().getPluginManager().callEvent(new PacketPreHandleEvent(client, packet));
         if (event.isCancelled()){
             return packet;
         }
@@ -302,8 +297,8 @@ public class Server {
                 }
                 break;
             default:
-                /** Here we call Event that will send packet to DEVs plugin*/
-                plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));
+                /* Here we call Event that will send packet to DEVs plugin*/
+                this.plugin.getProxy().getPluginManager().callEvent(new CustomPacketEvent(client, packet));
                 break;
         }
     }
@@ -311,7 +306,7 @@ public class Server {
     /* Simple method to check if client is alive*/
     public boolean isConnected(String client){
         try {
-            Handler handler = clients.get(client);
+            Handler handler = this.clients.get(client);
             handler.getOut().println("GATE_STATUS:" +System.nanoTime());
             return true;
         }catch (Exception e){
