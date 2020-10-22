@@ -1,0 +1,86 @@
+package alemiz.stargate;
+
+import alemiz.stargate.codec.StarGatePackets;
+import alemiz.stargate.protocol.ServerInfoRequestPacket;
+import alemiz.stargate.protocol.ServerInfoResponsePacket;
+import alemiz.stargate.protocol.ServerTransferPacket;
+import alemiz.stargate.server.StarGateServer;
+import alemiz.stargate.utils.BungeeLogger;
+import alemiz.stargate.utils.ServerLoader;
+import alemiz.stargate.utils.StarGateLogger;
+import com.google.common.io.ByteStreams;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
+import java.io.*;
+import java.net.InetSocketAddress;
+
+public class StarGate extends Plugin implements ServerLoader {
+
+    private static StarGate instance;
+    public Configuration config;
+
+    private BungeeLogger logger;
+    private StarGateServer server;
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        this.loadConfig();
+
+        this.logger = new BungeeLogger(this);
+        this.logger.setDebug(this.config.getBoolean("debug"));
+
+        InetSocketAddress address = new InetSocketAddress("0.0.0.0", this.config.getInt("port"));
+        this.server = new StarGateServer(address, this.config.getString("password"), this);
+        this.server.setServerListener(new StarGateServerListener(this));
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_REQUEST_PACKET, ServerInfoRequestPacket.class);
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_RESPONSE_PACKET, ServerInfoResponsePacket.class);
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_TRANSFER_PACKET, ServerTransferPacket.class);
+        this.server.start();
+    }
+
+    @Override
+    public void onDisable() {
+        this.server.shutdown();
+    }
+
+    public static StarGate getInstance() {
+        return instance;
+    }
+
+    private void loadConfig(){
+        if (!this.getDataFolder().exists()) {
+            this.getDataFolder().mkdir();
+        }
+        File configFile = new File(this.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            try {
+                configFile.createNewFile();
+                try (InputStream is = getResourceAsStream("config.yml");
+                     OutputStream os = new FileOutputStream(configFile)) {
+                    ByteStreams.copy(is, os);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to create configuration file", e);
+            }
+        }
+
+        try {
+            this.config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(this.getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Configuration getConfig() {
+        return this.config;
+    }
+
+    @Override
+    public StarGateLogger getStarGateLogger() {
+        return this.logger;
+    }
+}

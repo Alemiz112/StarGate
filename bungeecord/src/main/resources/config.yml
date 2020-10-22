@@ -1,0 +1,9 @@
+# StarGate WaterDog Core
+# Project by Alemiz
+#
+# StarGate service port
+port: 47007
+# To make connection secure enough set strong password
+password: "123456789"
+# Enable debug logger
+debug: true
