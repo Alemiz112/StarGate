@@ -34,6 +34,7 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerSession extends StarGateSession {
 
@@ -41,6 +42,8 @@ public class ServerSession extends StarGateSession {
     private final Queue<StarGatePacket> queuedPackets = PlatformDependent.newMpscQueue();
 
     private SessionHandler<ServerSession> customHandler;
+
+    private final AtomicBoolean authenticated = new AtomicBoolean(false);
 
     private HandshakeData handshakeData;
     private PingEntry pingEntry;
@@ -55,10 +58,7 @@ public class ServerSession extends StarGateSession {
     @Override
     public void onPacket(StarGatePacket packet) {
         Preconditions.checkNotNull(packet);
-        boolean handled = false;
-        if (this.packetHandler != null){
-            handled = packet.handle(this.packetHandler);
-        }
+        boolean handled = this.packetHandler != null && packet.handle(this.packetHandler);
 
         if (this.customHandler != null){
             try {
@@ -144,13 +144,17 @@ public class ServerSession extends StarGateSession {
 
     @Override
     public void onDisconnect(String reason) {
-        this.getLogger().info("StarGate client "+this.getClientName()+" has disconnected! Reason: "+reason);
+        if (this.isAuthenticated()){
+            this.getLogger().info("StarGate client "+this.getClientName()+" has disconnected! Reason: "+reason);
+        }
         this.close();
     }
 
     @Override
     public void disconnect(@NonNull String reason) {
-        this.getLogger().info("Disconnecting client "+this.getClientName());
+        if (this.isAuthenticated()){
+            this.getLogger().info("Disconnecting client "+this.getClientName());
+        }
         super.disconnect(reason);
     }
 
@@ -174,6 +178,15 @@ public class ServerSession extends StarGateSession {
     public String getClientName(){
         return this.handshakeData.getClientName();
     }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated.set(authenticated);
+    }
+
+    public boolean isAuthenticated() {
+        return this.authenticated.get();
+    }
+
 
     public void setHandshakeData(HandshakeData handshakeData) {
         if (this.handshakeData == null){

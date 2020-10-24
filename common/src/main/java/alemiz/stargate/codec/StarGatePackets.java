@@ -19,18 +19,19 @@ package alemiz.stargate.codec;
 public interface StarGatePackets {
 
     byte HANDSHAKE_PACKET = 0x01;
-    byte DISCONNECT_PACKET = 0x02;
-    byte PING_PACKET = 0x03;
-    byte PONG_PACKET = 0x04;
-    byte RECONNECT_PACKET = 0x05;
-    byte FORWARD_PACKET = 0x06;
+    byte SERVER_HANDSHAKE_PACKET = 0x02;
+    byte DISCONNECT_PACKET = 0x03;
+    byte PING_PACKET = 0x04;
+    byte PONG_PACKET = 0x05;
+    byte RECONNECT_PACKET = 0x06;
+    byte FORWARD_PACKET = 0x07;
 
     /**
      * This packets are not registered in codec by default.
      * Register this packet manually after client connects or on server startup if you need them
      */
 
-    byte SERVER_INFO_REQUEST_PACKET = 0x07;
-    byte SERVER_INFO_RESPONSE_PACKET = 0x08;
-    byte SERVER_TRANSFER_PACKET = 0x09;
+    byte SERVER_INFO_REQUEST_PACKET = 0x08;
+    byte SERVER_INFO_RESPONSE_PACKET = 0x09;
+    byte SERVER_TRANSFER_PACKET = 0x0a;
 }

@@ -21,5 +21,6 @@ import java.net.InetSocketAddress;
 public abstract class StarGateClientListener {
 
     public abstract void onSessionCreated(InetSocketAddress address, ClientSession session);
+    public abstract void onSessionAuthenticated(ClientSession session);
     public abstract void onSessionDisconnected(ClientSession session);
 }

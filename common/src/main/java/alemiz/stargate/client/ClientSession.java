@@ -40,7 +40,7 @@ public class ClientSession extends StarGateSession {
     public ClientSession(InetSocketAddress address, Channel channel, StarGateClient client) {
         super(address, channel);
         this.client = client;
-        this.packetHandler = new ClientPacketHandler(this);
+        this.packetHandler = new HandshakePacketHandler(this);
     }
 
     @Override
@@ -54,10 +54,7 @@ public class ClientSession extends StarGateSession {
     @Override
     public void onPacket(StarGatePacket packet) {
         Preconditions.checkNotNull(packet);
-        boolean handled = false;
-        if (this.packetHandler != null){
-            handled = packet.handle(this.packetHandler);
-        }
+        boolean handled = this.packetHandler != null && packet.handle(this.packetHandler);
 
         if (this.client.getCustomHandler() != null){
             try {
@@ -146,5 +143,9 @@ public class ClientSession extends StarGateSession {
 
     public void setClosed(boolean closed){
         this.closed.set(closed);
+    }
+
+    public StarGateClient getClient() {
+        return this.client;
     }
 }

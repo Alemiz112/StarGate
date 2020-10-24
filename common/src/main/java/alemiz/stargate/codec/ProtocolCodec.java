@@ -30,6 +30,7 @@ public class ProtocolCodec {
 
     public ProtocolCodec(){
         this.registerPacket(StarGatePackets.HANDSHAKE_PACKET, HandshakePacket.class);
+        this.registerPacket(StarGatePackets.SERVER_HANDSHAKE_PACKET, ServerHandshakePacket.class);
         this.registerPacket(StarGatePackets.DISCONNECT_PACKET, DisconnectPacket.class);
         this.registerPacket(StarGatePackets.PING_PACKET, PingPacket.class);
         this.registerPacket(StarGatePackets.PONG_PACKET, PongPacket.class);

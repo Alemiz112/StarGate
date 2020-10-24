@@ -91,11 +91,15 @@ public class StarGateServer extends Thread {
         this.interrupt();
     }
 
+
+    //TODO: check for opened sessions
+
     public void onSessionCreation(InetSocketAddress address, ChannelHandlerContext ctx){
         ServerSession session = new ServerSession(address, ctx.channel(), this);
         boolean success = this.serverListener == null || this.serverListener.onSessionCreated(address, session);
 
         if (success){
+            this.getLogger().debug("New StarGate session was created "+address);
             this.starGateSessionMap.put(address, session);
             session.onConnect();
         }else {

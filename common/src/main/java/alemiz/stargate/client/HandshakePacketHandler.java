@@ -16,32 +16,21 @@
 
 package alemiz.stargate.client;
 
-import alemiz.stargate.protocol.*;
+import alemiz.stargate.protocol.ServerHandshakePacket;
 import alemiz.stargate.session.SessionHandler;
 
-public class ClientPacketHandler extends SessionHandler<ClientSession> {
+public class HandshakePacketHandler extends SessionHandler<ClientSession> {
 
-    public ClientPacketHandler(ClientSession session){
+    public HandshakePacketHandler(ClientSession session) {
         super(session);
     }
 
     @Override
-    public boolean handlePing(PingPacket packet) {
-        PongPacket pongPacket = new PongPacket();
-        pongPacket.setPingTime(packet.getPingTime());
-        this.session.forcePacket(pongPacket);
-        return true;
-    }
-
-    @Override
-    public boolean handlePong(PongPacket packet) {
-        this.session.onPongReceive(packet);
-        return true;
-    }
-
-    @Override
-    public boolean handleReconnect(ReconnectPacket packet) {
-        this.session.reconnect(packet.getReason(), false);
+    public boolean handleServerHandshake(ServerHandshakePacket packet) {
+        if (this.session.getClient().getClientListener() != null){
+            this.session.getClient().getClientListener().onSessionAuthenticated(this.session);
+        }
+        this.session.setPacketHandler(new ClientPacketHandler(this.session));
         return true;
     }
 }

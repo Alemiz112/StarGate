@@ -24,6 +24,10 @@ public interface StarGatePacketHandler {
         return false;
     }
 
+    default boolean handleServerHandshake(ServerHandshakePacket packet) {
+        return false;
+    }
+
     default boolean handleDisconnect(DisconnectPacket packet){
         return false;
     }

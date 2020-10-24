@@ -18,6 +18,7 @@ package alemiz.stargate.server.handler;
 
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.HandshakePacket;
+import alemiz.stargate.protocol.ServerHandshakePacket;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.session.SessionHandler;
 import alemiz.stargate.protocol.types.HandshakeData;
@@ -38,8 +39,10 @@ public class HandshakeHandler extends SessionHandler<ServerSession> {
             return true;
         }
 
+        this.session.setAuthenticated(true);
         this.session.setPacketHandler(new ConnectedHandler(this.session));
         this.session.getLogger().info("New client connected! Name: "+handshakeData.getClientName()+" Software: "+handshakeData.getSoftware().name());
+        this.session.sendPacket(new ServerHandshakePacket());
         this.session.getServer().onSessionAuthenticated(this.session);
         return true;
     }
