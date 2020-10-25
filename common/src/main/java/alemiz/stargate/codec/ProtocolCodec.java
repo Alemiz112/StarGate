@@ -1,24 +1,22 @@
-/**
- * Copyright 2020 WaterdogTEAM
- * <p>
+/*
+ * Copyright 2020 Alemiz
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package alemiz.stargate.codec;
 
 import alemiz.stargate.protocol.*;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
@@ -64,12 +62,21 @@ public class ProtocolCodec {
     public void tryEncode(ByteBuf decoded, StarGatePacket packet) throws Exception {
         decoded.writeByte(packet.getPacketId());
 
-        ByteBuf payload = ByteBufAllocator.DEFAULT.directBuffer();
+        ByteBuf payload = decoded.alloc().buffer();
         packet.encodePayload(payload);
 
-        decoded.writeInt(payload.readableBytes());
+        int bodyLength = payload.readableBytes();
+        if (packet.isResponse() || packet.sendsResponse()){
+            bodyLength += 4;
+        }
+
+        decoded.writeInt(bodyLength);
         decoded.writeBytes(payload);
         payload.release();
+
+        if (packet.isResponse() || packet.sendsResponse()){
+            decoded.writeInt(packet.getResponseId());
+        }
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
@@ -79,11 +86,18 @@ public class ProtocolCodec {
             return null;
         }
         int bodyLength = encoded.readInt();
+        if (packet.isResponse() || packet.sendsResponse()){
+            bodyLength -= 4;
+        }
 
-        ByteBuf payload = ByteBufAllocator.DEFAULT.directBuffer(bodyLength);
+        ByteBuf payload = encoded.alloc().buffer(bodyLength);
         payload.writeBytes(encoded, bodyLength);
         packet.decodePayload(payload);
         payload.release();
+
+        if (packet.isResponse() || packet.sendsResponse()){
+            packet.setResponseId(encoded.readInt());
+        }
         return packet;
     }
 }

@@ -1,17 +1,16 @@
-/**
- * Copyright 2020 WaterdogTEAM
- * <p>
+/*
+ * Copyright 2020 Alemiz
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package alemiz.stargate.session;
@@ -21,13 +20,18 @@ import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.PongPacket;
 import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.utils.StarGateLogger;
+import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.NonNull;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class StarGateSession {
 
@@ -37,6 +41,9 @@ public abstract class StarGateSession {
     protected final InetSocketAddress address;
     protected final Channel channel;
     protected final EventLoop eventLoop;
+
+    protected AtomicInteger responseCounter = new AtomicInteger(0);
+    protected Int2ObjectMap<CompletableFuture<StarGatePacket>> pendingResponses = new Int2ObjectOpenHashMap<>();
 
     protected StarGatePacketHandler packetHandler;
     protected final AtomicBoolean closed = new AtomicBoolean(false);
@@ -48,7 +55,20 @@ public abstract class StarGateSession {
         eventLoop.scheduleAtFixedRate(this::onTick, 50, 50, TimeUnit.MILLISECONDS);
     }
 
-    public abstract void onPacket(StarGatePacket packet);
+    public boolean onPacket(StarGatePacket packet) {
+        Preconditions.checkNotNull(packet);
+        boolean handled = this.packetHandler != null && packet.handle(this.packetHandler);
+
+        if (packet.isResponse()){
+            CompletableFuture<StarGatePacket> future = this.pendingResponses.remove(packet.getResponseId());
+            if (future != null){
+                future.complete(packet);
+                handled = true;
+            }
+        }
+        return handled;
+    }
+
     protected abstract void onTick();
 
     public void onConnect(){
@@ -56,6 +76,17 @@ public abstract class StarGateSession {
     public abstract void onDisconnect(String reason);
 
     protected abstract void onPongReceive(PongPacket packet);
+
+    public CompletableFuture<StarGatePacket> responsePacket(StarGatePacket packet){
+        if (!packet.sendsResponse()){
+            return null;
+        }
+        int responseId = this.responseCounter.getAndIncrement();
+        packet.setResponseId(responseId);
+
+        this.sendPacket(packet);
+        return this.pendingResponses.computeIfAbsent(responseId, i -> new CompletableFuture<>());
+    }
 
     public void sendPacket(StarGatePacket packet){
         this.forcePacket(packet);
