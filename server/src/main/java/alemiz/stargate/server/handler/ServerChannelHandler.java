@@ -61,8 +61,11 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
         this.server.getLogger().logException(e);
         InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
         ServerSession session = this.server.getSessions().get(address);
-        if (session != null){
-            session.close();
+        if (session == null){
+            return;
         }
+
+        session.close();
+        this.server.onSessionDisconnect(address, session);
     }
 }

@@ -50,8 +50,14 @@ public class ClientChannelHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
         this.client.getLogger().logException(e);
-        if (this.client.getSession() != null){
-            this.client.getSession().close();
+        ClientSession session = this.client.getSession();
+        if (session == null){
+            return;
+        }
+
+        session.close();
+        if (this.client.getClientListener() != null){
+            this.client.getClientListener().onSessionDisconnected(this.client.getSession());
         }
     }
 }

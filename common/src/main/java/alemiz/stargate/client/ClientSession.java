@@ -19,7 +19,6 @@ import alemiz.stargate.protocol.*;
 import alemiz.stargate.protocol.types.PingEntry;
 import alemiz.stargate.session.StarGateSession;
 import alemiz.stargate.utils.StarGateLogger;
-import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
 import io.netty.util.internal.PlatformDependent;
 
@@ -116,6 +115,7 @@ public class ClientSession extends StarGateSession {
 
         packet.setPongTime(System.currentTimeMillis());
         this.pingEntry.getFuture().complete(packet);
+        this.pingEntry = null;
     }
 
     @Override

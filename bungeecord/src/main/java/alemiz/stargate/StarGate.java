@@ -19,6 +19,7 @@ import alemiz.stargate.codec.StarGatePackets;
 import alemiz.stargate.protocol.ServerInfoRequestPacket;
 import alemiz.stargate.protocol.ServerInfoResponsePacket;
 import alemiz.stargate.protocol.ServerTransferPacket;
+import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.StarGateServer;
 import alemiz.stargate.utils.BungeeLogger;
 import alemiz.stargate.utils.ServerLoader;
@@ -40,6 +41,8 @@ public class StarGate extends Plugin implements ServerLoader {
     private BungeeLogger logger;
     private StarGateServer server;
 
+    private boolean checkClientNames;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -47,8 +50,9 @@ public class StarGate extends Plugin implements ServerLoader {
 
         this.logger = new BungeeLogger(this);
         this.logger.setDebug(this.config.getBoolean("debug"));
+        this.checkClientNames = this.config.getBoolean("blockSameNames");
 
-        InetSocketAddress address = new InetSocketAddress("0.0.0.0", this.config.getInt("port"));
+        InetSocketAddress address = new InetSocketAddress("0.0.0.0", this.config.getInt("serverPort"));
         this.server = new StarGateServer(address, this.config.getString("password"), this);
         this.server.setServerListener(new StarGateServerListener(this));
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_REQUEST_PACKET, ServerInfoRequestPacket.class);
@@ -62,8 +66,8 @@ public class StarGate extends Plugin implements ServerLoader {
         this.server.shutdown();
     }
 
-    public static StarGate getInstance() {
-        return instance;
+    public ServerSession getSession(String sessionName) {
+        return this.server.getSession(sessionName);
     }
 
     private void loadConfig(){
@@ -90,6 +94,10 @@ public class StarGate extends Plugin implements ServerLoader {
         }
     }
 
+    public static StarGate getInstance() {
+        return instance;
+    }
+
     public Configuration getConfig() {
         return this.config;
     }
@@ -97,5 +105,13 @@ public class StarGate extends Plugin implements ServerLoader {
     @Override
     public StarGateLogger getStarGateLogger() {
         return this.logger;
+    }
+
+    public StarGateServer getServer() {
+        return this.server;
+    }
+
+    public boolean isCheckClientNames() {
+        return this.checkClientNames;
     }
 }

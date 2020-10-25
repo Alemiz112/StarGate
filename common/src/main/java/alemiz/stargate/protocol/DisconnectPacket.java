@@ -31,7 +31,8 @@ public class DisconnectPacket extends StarGatePacket {
     public enum REASON {
         SERVER_SHUTDOWN("StarGate server shutdown!"),
         CLIENT_SHUTDOWN("StarGate client shutdown!"),
-        WRONG_PASSWORD("Wrong password!");
+        WRONG_PASSWORD("Wrong password!"),
+        ANOTHER_LOCATION_LOGIN("Connected from another location!");
 
         private final String message;
 

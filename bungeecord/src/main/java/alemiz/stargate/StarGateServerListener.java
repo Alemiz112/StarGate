@@ -15,7 +15,11 @@
 
 package alemiz.stargate;
 
+import alemiz.stargate.events.ClientAuthenticatedEvent;
+import alemiz.stargate.events.ClientConnectedEvent;
+import alemiz.stargate.events.ClientDisconnectedEvent;
 import alemiz.stargate.handler.PacketHandler;
+import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.server.ServerSession;
 
 import java.net.InetSocketAddress;
@@ -30,8 +34,9 @@ public class StarGateServerListener extends alemiz.stargate.server.StarGateServe
 
     @Override
     public boolean onSessionCreated(InetSocketAddress address, ServerSession session) {
-        //TODO: event
-        return true;
+        ClientConnectedEvent event = new ClientConnectedEvent(session, this.loader);
+        this.loader.getProxy().getPluginManager().callEvent(event);
+        return !event.isCancelled();
     }
 
     /**
@@ -41,11 +46,24 @@ public class StarGateServerListener extends alemiz.stargate.server.StarGateServe
     @Override
     public void onSessionAuthenticated(ServerSession session) {
         session.setPacketHandler(new PacketHandler(session, this.loader));
-        //TODO: event
+
+        ClientAuthenticatedEvent event = new ClientAuthenticatedEvent(session, this.loader);
+        this.loader.getProxy().getPluginManager().callEvent(event);
+        if (event.isCancelled()){
+            session.disconnect(event.getCancelMessage());
+        }
+
+        if (this.loader.isCheckClientNames()){
+            ServerSession oldSession = this.loader.getSession(session.getClientName());
+            if (oldSession != null){
+                oldSession.disconnect(DisconnectPacket.REASON.ANOTHER_LOCATION_LOGIN);
+            }
+        }
     }
 
     @Override
     public void onSessionDisconnected(ServerSession session) {
-        //TODO: event
+        ClientDisconnectedEvent event = new ClientDisconnectedEvent(session, this.loader);
+        this.loader.getProxy().getPluginManager().callEvent(event);
     }
 }

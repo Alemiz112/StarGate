@@ -32,6 +32,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 public class StarGateClient extends Thread {
 
@@ -106,6 +107,13 @@ public class StarGateClient extends Thread {
         if (this.session != null){
             this.session.sendPacket(packet);
         }
+    }
+
+    public CompletableFuture<StarGatePacket> responsePacket(StarGatePacket packet){
+        if (this.session != null){
+            return this.session.responsePacket(packet);
+        }
+        return null;
     }
 
     public void shutdown() {

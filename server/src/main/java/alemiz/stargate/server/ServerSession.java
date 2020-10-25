@@ -139,6 +139,7 @@ public class ServerSession extends StarGateSession {
 
         packet.setPongTime(System.currentTimeMillis());
         this.pingEntry.getFuture().complete(packet);
+        this.pingEntry = null;
     }
 
     @Override
