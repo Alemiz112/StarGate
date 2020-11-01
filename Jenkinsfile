@@ -25,7 +25,7 @@ pipeline {
 
         stage ('Release') {
             when {
-                branch "release"
+                branch "master"
             }
             steps {
                 sh 'mvn javadoc:jar source:jar deploy -DskipTests'
@@ -37,4 +37,5 @@ pipeline {
         always {
             deleteDir()
         }
+    }
 }
