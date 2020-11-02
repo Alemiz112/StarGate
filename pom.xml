@@ -21,4 +21,17 @@
         <fastutil.version>8.4.2</fastutil.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>waterdog-releases</name>
+            <url>https://repo.waterdog.dev/artifactory/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>waterdog-snapshots</name>
+            <url>https://repo.waterdog.dev/artifactory/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
