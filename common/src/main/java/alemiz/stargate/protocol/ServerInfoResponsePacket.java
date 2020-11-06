@@ -23,6 +23,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
 @ToString
@@ -32,8 +35,8 @@ public class ServerInfoResponsePacket extends StarGatePacket {
     private boolean selfInfo;
     private int onlinePlayers;
     private int maxPlayers;
-    private String[] playerList;
-    private String[] serverList;
+    private List<String> playerList = new ArrayList<>();
+    private List<String> serverList = new ArrayList<>();
 
     @Override
     public void encodePayload(ByteBuf byteBuf) {
@@ -43,10 +46,8 @@ public class ServerInfoResponsePacket extends StarGatePacket {
         PacketHelper.writeInt(byteBuf, this.onlinePlayers);
         PacketHelper.writeInt(byteBuf, this.maxPlayers);
 
-        String players = String.join(",", this.playerList);
-        String servers = String.join(",", this.serverList);
-        PacketHelper.writeString(byteBuf, players);
-        PacketHelper.writeString(byteBuf, servers);
+        PacketHelper.writeArray(byteBuf, this.playerList, PacketHelper::writeString);
+        PacketHelper.writeArray(byteBuf, this.serverList, PacketHelper::writeString);
     }
 
     @Override
@@ -57,10 +58,8 @@ public class ServerInfoResponsePacket extends StarGatePacket {
         this.onlinePlayers = PacketHelper.readInt(byteBuf);
         this.maxPlayers = PacketHelper.readInt(byteBuf);
 
-        String players = PacketHelper.readString(byteBuf);
-        String servers = PacketHelper.readString(byteBuf);
-        this.playerList = players.split(",");
-        this.serverList = servers.split(",");
+        PacketHelper.readArray(byteBuf, this.playerList, PacketHelper::readString);
+        PacketHelper.readArray(byteBuf, this.serverList, PacketHelper::readString);
     }
 
     @Override

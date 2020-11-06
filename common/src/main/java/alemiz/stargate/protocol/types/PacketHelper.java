@@ -18,6 +18,9 @@ package alemiz.stargate.protocol.types;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class PacketHelper {
 
@@ -78,5 +81,19 @@ public class PacketHelper {
 
     public static String readString(ByteBuf buf) {
         return new String(readByteArray(buf), StandardCharsets.UTF_8);
+    }
+
+    public static <T> void readArray(ByteBuf buf, Collection<T> array, Function<ByteBuf, T> function) {
+        int length = readInt(buf);
+        for (int i = 0; i < length; i++) {
+            array.add(function.apply(buf));
+        }
+    }
+
+    public static <T> void writeArray(ByteBuf buf, Collection<T> array, BiConsumer<ByteBuf, T> consumer){
+        writeInt(buf, array.size());
+        for (T value : array){
+            consumer.accept(buf, value);
+        }
     }
 }
