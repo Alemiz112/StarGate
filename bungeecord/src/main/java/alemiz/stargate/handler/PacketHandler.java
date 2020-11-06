@@ -47,17 +47,13 @@ public class PacketHandler extends ConnectedHandler {
             response.setOnlinePlayers(this.loader.getProxy().getOnlineCount());
             response.setMaxPlayers(this.loader.getProxy().getConfig().getPlayerLimit());
 
-            List<String> playerList = new ArrayList<>();
             for (ProxiedPlayer player : this.loader.getProxy().getPlayers()){
-                playerList.add(player.getName());
+                response.getPlayerList().add(player.getName());
             }
-            response.setPlayerList(playerList.toArray(new String[0]));
 
-            List<String> serverList = new ArrayList<>();
             for (ServerInfo serverInfo : this.loader.getProxy().getServersCopy().values()){
-                serverList.add(serverInfo.getName());
+                response.getServerList().add(serverInfo.getName());
             }
-            response.setServerList(serverList.toArray(new String[0]));
             this.session.sendPacket(response);
             return true;
         }
@@ -69,12 +65,9 @@ public class PacketHandler extends ConnectedHandler {
         response.setOnlinePlayers(serverInfo.getPlayers().size());
         response.setMaxPlayers(0);
 
-        List<String> playerList = new ArrayList<>();
         for (ProxiedPlayer player : serverInfo.getPlayers()){
-            playerList.add(player.getName());
+            response.getPlayerList().add(player.getName());
         }
-        response.setPlayerList(playerList.toArray(new String[0]));
-        response.setServerList(new String[0]);
         this.session.sendPacket(response);
         return true;
     }
