@@ -17,16 +17,19 @@ package alemiz.stargate.handler;
 
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.StarGatePacket;
+import alemiz.stargate.utils.StarGateLogger;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 public class PacketEncoder extends MessageToByteEncoder<StarGatePacket> {
 
+    private final StarGateLogger logger;
     private final ProtocolCodec protocolCodec;
 
-    public PacketEncoder(ProtocolCodec protocolCodec){
+    public PacketEncoder(ProtocolCodec protocolCodec, StarGateLogger logger){
         this.protocolCodec = protocolCodec;
+        this.logger = logger;
     }
 
     @Override

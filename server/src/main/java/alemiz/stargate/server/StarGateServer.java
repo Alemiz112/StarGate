@@ -189,8 +189,8 @@ public class StarGateServer extends Thread {
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDecoder(this.server.getProtocolCodec()));
-            pipeline.addLast(new PacketEncoder(this.server.getProtocolCodec()));
+            pipeline.addLast(new PacketDecoder(this.server.getProtocolCodec(), this.server.getLogger()));
+            pipeline.addLast(new PacketEncoder(this.server.getProtocolCodec(), this.server.getLogger()));
             pipeline.addLast(new ServerChannelHandler(this.server));
         }
     }

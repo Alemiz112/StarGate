@@ -185,8 +185,8 @@ public class StarGateClient extends Thread {
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDecoder(this.client.getProtocolCodec()));
-            pipeline.addLast(new PacketEncoder(this.client.getProtocolCodec()));
+            pipeline.addLast(new PacketDecoder(this.client.getProtocolCodec(), this.client.getLogger()));
+            pipeline.addLast(new PacketEncoder(this.client.getProtocolCodec(), this.client.getLogger()));
             pipeline.addLast("timeout-handler", new ReadTimeoutHandler(20));
             pipeline.addLast(new ClientChannelHandler(this.client));
         }

@@ -15,6 +15,7 @@
 
 package alemiz.stargate.protocol.types;
 
+import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
@@ -75,6 +76,7 @@ public class PacketHelper {
     }
 
     public static void writeString(ByteBuf buf, String string) {
+        Preconditions.checkNotNull(string, "String can not be null!");
         byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
         writeByteArray(buf, bytes);
     }

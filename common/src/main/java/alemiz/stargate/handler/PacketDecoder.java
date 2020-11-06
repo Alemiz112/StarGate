@@ -17,6 +17,7 @@ package alemiz.stargate.handler;
 
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.StarGatePacket;
+import alemiz.stargate.utils.StarGateLogger;
 import alemiz.stargate.utils.exception.StarGateException;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,10 +27,12 @@ import java.util.List;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
+    private final StarGateLogger logger;
     private final ProtocolCodec protocolCodec;
 
-    public PacketDecoder(ProtocolCodec protocolCodec){
+    public PacketDecoder(ProtocolCodec protocolCodec, StarGateLogger logger){
         this.protocolCodec = protocolCodec;
+        this.logger = logger;
     }
 
     @Override
@@ -37,10 +40,17 @@ public class PacketDecoder extends ByteToMessageDecoder {
         if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC){
             throw new StarGateException("Received wrong magic");
         }
+        buffer.markReaderIndex();
 
-        StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
-        if (packet != null){
-            out.add(packet);
+        try {
+            StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
+            if (packet != null){
+                out.add(packet);
+            }
+        }catch (Exception e){
+            buffer.resetReaderIndex();
+            byte packetId = buffer.readByte();
+            this.logger.error("Can not decode packet! PacketId='"+packetId+"'", e);
         }
     }
 }
