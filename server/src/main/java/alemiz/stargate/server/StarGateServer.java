@@ -50,6 +50,8 @@ public class StarGateServer extends Thread {
     private final String password;
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
+    private ChannelFuture serverFuture;
+
     public StarGateServer(InetSocketAddress bindAddress, String password, ServerLoader loader){
         this.loader = loader;
         this.bindAddress = bindAddress;
@@ -75,7 +77,7 @@ public class StarGateServer extends Thread {
             bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
             bootstrap.childHandler(new StarGateServerInitializer(this));
 
-            bootstrap.bind(this.bindAddress);
+            this.serverFuture = bootstrap.bind(this.bindAddress);
         }catch (Exception e){
             this.getLogger().error("StarGate can't be bind to "+this.bindAddress, e);
         }
@@ -86,7 +88,9 @@ public class StarGateServer extends Thread {
         for (ServerSession session : this.starGateSessionMap.values()){
             session.disconnect(DisconnectPacket.REASON.SERVER_SHUTDOWN);
         }
-        Thread.sleep(500); // Give some time
+        this.bossLoopGroup.shutdownGracefully();
+        this.eventLoopGroup.shutdownGracefully();
+        this.serverFuture.channel().closeFuture().sync();
         this.interrupt();
     }
 

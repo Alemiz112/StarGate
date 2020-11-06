@@ -16,6 +16,7 @@
 package alemiz.stargate.protocol;
 
 import alemiz.stargate.handler.StarGatePacketHandler;
+import alemiz.stargate.utils.StarGateLogger;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
@@ -53,5 +54,9 @@ public abstract class StarGatePacket {
 
     public boolean isResponse(){
         return false;
+    }
+
+    public int getLogLevel() {
+        return StarGateLogger.LEVEL_FILTERED;
     }
 }

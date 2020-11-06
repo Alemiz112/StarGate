@@ -48,6 +48,9 @@ public abstract class StarGateSession {
     protected StarGatePacketHandler packetHandler;
     protected final AtomicBoolean closed = new AtomicBoolean(false);
 
+    protected int logInputLevel;
+    protected int logOutputLevel;
+
     public StarGateSession(InetSocketAddress address, Channel channel){
         this.address = address;
         this.channel = channel;
@@ -65,6 +68,10 @@ public abstract class StarGateSession {
                 future.complete(packet);
                 handled = true;
             }
+        }
+
+        if (this.logInputLevel >= packet.getLogLevel()){
+            this.getLogger().debug("Received "+packet);
         }
         return handled;
     }
@@ -95,6 +102,9 @@ public abstract class StarGateSession {
     public void forcePacket(StarGatePacket packet){
         if (!this.isClosed()){
             this.channel.writeAndFlush(packet);
+        }
+        if (this.logOutputLevel >= packet.getLogLevel()){
+            this.getLogger().debug("Sent "+packet);
         }
     }
 
@@ -140,4 +150,21 @@ public abstract class StarGateSession {
     public StarGatePacketHandler getPacketHandler() {
         return this.packetHandler;
     }
+
+    public void setLogInputLevel(int logInputLevel) {
+        this.logInputLevel = logInputLevel;
+    }
+
+    public int getLogInputLevel() {
+        return this.logInputLevel;
+    }
+
+    public void setLogOutputLevel(int logOutputLevel) {
+        this.logOutputLevel = logOutputLevel;
+    }
+
+    public int getLogOutputLevel() {
+        return this.logOutputLevel;
+    }
+
 }

@@ -17,6 +17,10 @@ package alemiz.stargate.utils;
 
 public interface StarGateLogger {
 
+    int LEVEL_DISABLED = 0;
+    int LEVEL_FILTERED = 1;
+    int LEVEL_ALL = 2;
+
     void debug(String message);
     void info(String message);
 

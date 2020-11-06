@@ -10,7 +10,9 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean install'
+                withMaven(options: [pipelineGraphPublisher(lifecycleThreshold: 'install')]) {
+                    sh 'mvn clean install'
+                }
             }
         }
 

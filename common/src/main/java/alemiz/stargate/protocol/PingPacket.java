@@ -18,6 +18,7 @@ package alemiz.stargate.protocol;
 import alemiz.stargate.codec.StarGatePackets;
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.protocol.types.PacketHelper;
+import alemiz.stargate.utils.StarGateLogger;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,5 +49,10 @@ public class PingPacket extends StarGatePacket {
     @Override
     public byte getPacketId() {
         return StarGatePackets.PING_PACKET;
+    }
+
+    @Override
+    public int getLogLevel() {
+        return StarGateLogger.LEVEL_ALL;
     }
 }

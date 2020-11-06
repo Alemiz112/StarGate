@@ -16,6 +16,7 @@
 package alemiz.stargate.handler;
 
 import alemiz.stargate.codec.ProtocolCodec;
+import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.utils.exception.StarGateException;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,6 +38,9 @@ public class PacketDecoder extends ByteToMessageDecoder {
             throw new StarGateException("Received wrong magic");
         }
 
-        out.add(this.protocolCodec.tryDecode(buffer));
+        StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
+        if (packet != null){
+            out.add(packet);
+        }
     }
 }
