@@ -28,6 +28,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.SneakyThrows;
 
 import java.net.InetSocketAddress;
@@ -55,10 +56,13 @@ public class StarGateServer extends Thread {
     public StarGateServer(InetSocketAddress bindAddress, String password, ServerLoader loader){
         this.loader = loader;
         this.bindAddress = bindAddress;
-        this.bossLoopGroup = new NioEventLoopGroup();
-        this.eventLoopGroup = new NioEventLoopGroup();
         this.protocolCodec = new ProtocolCodec();
         this.password = password;
+
+
+        DefaultThreadFactory factory = new DefaultThreadFactory("stargate");
+        this.bossLoopGroup = new NioEventLoopGroup(0, factory);
+        this.eventLoopGroup = new NioEventLoopGroup(0, factory);
     }
 
     @Override

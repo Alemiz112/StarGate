@@ -80,7 +80,7 @@ public class ProtocolCodec {
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
-        byte packetId = encoded.readByte(); //Packet od
+        byte packetId = encoded.readByte(); //Packet id
         StarGatePacket packet = this.constructPacket(packetId);
         if (packet == null){
             return null;

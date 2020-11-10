@@ -30,6 +30,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
@@ -53,7 +54,9 @@ public class StarGateClient extends Thread {
         this.address = address;
         this.handshakeData = handshakeData;
         this.protocolCodec = new ProtocolCodec();
-        this.eventLoopGroup = new NioEventLoopGroup();
+
+        DefaultThreadFactory factory = new DefaultThreadFactory("stargate");
+        this.eventLoopGroup = new NioEventLoopGroup(0, factory);
 
         this.setName("StarGate Client #"+handshakeData.getClientName());
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
