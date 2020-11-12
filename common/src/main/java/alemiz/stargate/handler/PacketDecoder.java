@@ -37,10 +37,10 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
+        buffer.markReaderIndex();
         if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC){
             throw new StarGateException("Received wrong magic");
         }
-        buffer.markReaderIndex();
 
         try {
             StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
@@ -49,8 +49,9 @@ public class PacketDecoder extends ByteToMessageDecoder {
             }
         }catch (Exception e){
             buffer.resetReaderIndex();
+            short magic = buffer.readShort(); // Magic
             byte packetId = buffer.readByte();
-            this.logger.error("Can not decode packet! PacketId='"+packetId+"'", e);
+            this.logger.error("Can not decode packet! magic='"+magic+"' packetId='"+packetId+"'", e);
         }
     }
 }

@@ -20,6 +20,8 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class ProtocolCodec {
 
     public static final short STARGATE_MAGIC = 0xa20;
@@ -53,8 +55,8 @@ public class ProtocolCodec {
         if (clazz == null) return null;
 
         try {
-            return clazz.newInstance();
-        }catch (IllegalAccessException | InstantiationException e){
+            return clazz.getDeclaredConstructor().newInstance();
+        }catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e){
             return null;
         }
     }
@@ -80,18 +82,24 @@ public class ProtocolCodec {
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
-        byte packetId = encoded.readByte(); //Packet id
+        byte packetId = encoded.readByte(); // Packet id
         StarGatePacket packet = this.constructPacket(packetId);
         if (packet == null){
             return null;
         }
+
         int bodyLength = encoded.readInt();
+        if (!encoded.isReadable(bodyLength)){
+            encoded.resetReaderIndex(); // Excepting missing data.
+            return null;
+        }
+
         if (packet.isResponse() || packet.sendsResponse()){
             bodyLength -= 4;
         }
 
         ByteBuf payload = encoded.alloc().buffer(bodyLength);
-        payload.writeBytes(encoded, bodyLength);
+        encoded.readBytes(payload);
         packet.decodePayload(payload);
         payload.release();
 
