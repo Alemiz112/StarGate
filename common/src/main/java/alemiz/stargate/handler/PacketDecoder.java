@@ -37,6 +37,10 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
+        if (buffer.isReadable(7)){
+            return; // If packet header is not readable full packet was not received
+        }
+
         buffer.markReaderIndex();
         if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC){
             throw new StarGateException("Received wrong magic");
