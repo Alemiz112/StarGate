@@ -1,0 +1,13 @@
+# StarGate WaterDog Core
+# Project by Alemiz
+
+# On this port StarGate server will listen for new connections.
+serverPort: 47007
+# To make connection secure enough set strong password that will be used to authenticate clients.
+password: "123456789"
+# Clients should not have same name and should be same as name of downstream server.
+# Disabling this option will allow to join more clients using same client name.
+# If enabled, some packets that use client name to identify client, might not work.
+blockSameNames: true
+# Enable debug logger
+debug: true
