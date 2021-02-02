@@ -19,6 +19,8 @@
     <properties>
         <netty.version>4.1.43.Final</netty.version>
         <fastutil.version>8.4.2</fastutil.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <distributionManagement>
