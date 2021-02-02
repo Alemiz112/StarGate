@@ -11,8 +11,8 @@
 
     <modules>
         <module>server</module>
-        <module>bungeecord</module>
         <module>common</module>
+        <module>bungeecord</module>
         <module>waterdogpe</module>
     </modules>
 

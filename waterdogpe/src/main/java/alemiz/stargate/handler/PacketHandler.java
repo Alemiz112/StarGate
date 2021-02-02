@@ -21,11 +21,8 @@ import alemiz.stargate.protocol.ServerInfoResponsePacket;
 import alemiz.stargate.protocol.ServerTransferPacket;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.handler.ConnectedHandler;
-import pe.waterdog.network.ServerInfo;
-import pe.waterdog.player.ProxiedPlayer;
-
-import java.util.ArrayList;
-import java.util.List;
+import dev.waterdog.network.ServerInfo;
+import dev.waterdog.player.ProxiedPlayer;
 
 public class PacketHandler extends ConnectedHandler {
 

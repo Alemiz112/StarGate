@@ -24,7 +24,7 @@ import alemiz.stargate.server.StarGateServer;
 import alemiz.stargate.utils.WaterdogLogger;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
-import pe.waterdog.plugin.Plugin;
+import dev.waterdog.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 
