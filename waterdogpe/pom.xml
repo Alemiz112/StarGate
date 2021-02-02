@@ -14,7 +14,7 @@
     <repositories>
         <repository>
             <id>waterdog-repo</id>
-            <url>https://repo.waterdog.dev/artifactory/main</url>
+            <url>http://repo.waterdog.dev/artifactory/main</url>
         </repository>
     </repositories>
 
