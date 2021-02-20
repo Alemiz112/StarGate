@@ -77,6 +77,6 @@ public class PacketHandler extends ConnectedHandler {
             return false;
         }
         player.connect(serverInfo);
-        return false;
+        return true;
     }
 }

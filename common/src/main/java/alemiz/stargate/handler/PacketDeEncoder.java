@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alemiz
+ * Copyright 2021 Alemiz
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -21,26 +21,27 @@ import alemiz.stargate.utils.StarGateLogger;
 import alemiz.stargate.utils.exception.StarGateException;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.ByteToMessageCodec;
 
 import java.util.List;
 
-public class PacketDecoder extends ByteToMessageDecoder {
+public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
 
     private final StarGateLogger logger;
     private final ProtocolCodec protocolCodec;
 
-    public PacketDecoder(ProtocolCodec protocolCodec, StarGateLogger logger){
+    public PacketDeEncoder(ProtocolCodec protocolCodec, StarGateLogger logger){
         this.protocolCodec = protocolCodec;
         this.logger = logger;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-        if (!buffer.isReadable(7)){
+        if (!buffer.isReadable(11)) { // Magic + Packet ID + response ID + body length
             return; // If packet header is not readable full packet was not received
         }
 
+        int index = buffer.readerIndex();
         buffer.markReaderIndex();
         if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC){
             throw new StarGateException("Received wrong magic");
@@ -48,14 +49,20 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
         try {
             StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
-            if (packet != null){
-                out.add(packet);
+            if (packet == null) {
+                buffer.resetReaderIndex();
             }
+            out.add(packet);
         }catch (Exception e){
-            buffer.resetReaderIndex();
-            short magic = buffer.readShort(); // Magic
-            byte packetId = buffer.readByte();
-            this.logger.error("Can not decode packet! magic='"+magic+"' packetId='"+packetId+"'", e);
+            byte packetId = buffer.getByte(index + 2);
+            buffer.skipBytes(buffer.readableBytes());
+            this.logger.error("Can not decode StarGatePacket packetId="+packetId, e);
         }
+    }
+
+    @Override
+    protected void encode(ChannelHandlerContext ctx, StarGatePacket packet, ByteBuf buffer) throws Exception {
+        buffer.writeShort(ProtocolCodec.STARGATE_MAGIC);
+        this.protocolCodec.tryEncode(buffer, packet);
     }
 }

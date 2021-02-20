@@ -15,8 +15,7 @@
 
 package alemiz.stargate.client;
 
-import alemiz.stargate.handler.PacketDecoder;
-import alemiz.stargate.handler.PacketEncoder;
+import alemiz.stargate.handler.PacketDeEncoder;
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.StarGatePacket;
@@ -188,8 +187,7 @@ public class StarGateClient extends Thread {
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDecoder(this.client.getProtocolCodec(), this.client.getLogger()));
-            pipeline.addLast(new PacketEncoder(this.client.getProtocolCodec(), this.client.getLogger()));
+            pipeline.addLast(new PacketDeEncoder(this.client.getProtocolCodec(), this.client.getLogger()));
             pipeline.addLast("timeout-handler", new ReadTimeoutHandler(20));
             pipeline.addLast(new ClientChannelHandler(this.client));
         }

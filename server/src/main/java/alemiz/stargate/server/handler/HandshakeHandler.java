@@ -38,6 +38,12 @@ public class HandshakeHandler extends SessionHandler<ServerSession> {
             return true;
         }
 
+        if (this.session.getServer().getProtocolVersion() != handshakeData.getProtocolVersion()) {
+            this.session.getLogger().warn("Client "+handshakeData.getClientName()+" connected with incompatible protocol version ("+handshakeData.getProtocolVersion()+")!");
+            this.session.disconnect(DisconnectPacket.REASON.INCORRECT_VERSION);
+            return true;
+        }
+
         this.session.setAuthenticated(true);
         this.session.setPacketHandler(new ConnectedHandler(this.session));
         this.session.getLogger().info("New client connected! Name: "+handshakeData.getClientName()+" Software: "+handshakeData.getSoftware().name());

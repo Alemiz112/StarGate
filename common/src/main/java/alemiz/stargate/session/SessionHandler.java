@@ -17,6 +17,8 @@ package alemiz.stargate.session;
 
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.protocol.DisconnectPacket;
+import alemiz.stargate.protocol.UnknownPacket;
+import io.netty.buffer.ByteBufUtil;
 
 public abstract class SessionHandler<T extends StarGateSession> implements StarGatePacketHandler {
 
@@ -33,6 +35,18 @@ public abstract class SessionHandler<T extends StarGateSession> implements StarG
     @Override
     public boolean handleDisconnect(DisconnectPacket packet) {
         this.session.onDisconnect(packet.getReason());
+        return true;
+    }
+
+    @Override
+    public boolean handleUnknown(UnknownPacket packet) {
+        try {
+            this.session.getLogger().info("Received UnknownPacket packetId="+packet.getPacketId()+" payload="+(packet.getPayload() == null ?
+                    "null" :
+                    ByteBufUtil.prettyHexDump(packet.getPayload())));
+        } finally {
+            packet.release();
+        }
         return true;
     }
 }

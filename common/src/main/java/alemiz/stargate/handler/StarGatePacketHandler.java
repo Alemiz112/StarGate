@@ -59,4 +59,8 @@ public interface StarGatePacketHandler {
         return false;
     }
 
+    default boolean handleUnknown(UnknownPacket packet) {
+        return false;
+    }
+
 }

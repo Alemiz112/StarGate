@@ -33,6 +33,7 @@ public class DisconnectPacket extends StarGatePacket {
         SERVER_SHUTDOWN("StarGate server shutdown!"),
         CLIENT_SHUTDOWN("StarGate client shutdown!"),
         WRONG_PASSWORD("Wrong password!"),
+        INCORRECT_VERSION("Incompatible version!"),
         ANOTHER_LOCATION_LOGIN("Connected from another location!");
 
         private final String message;

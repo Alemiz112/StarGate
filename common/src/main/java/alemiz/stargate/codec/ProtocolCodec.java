@@ -17,6 +17,7 @@ package alemiz.stargate.codec;
 
 import alemiz.stargate.protocol.*;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
@@ -61,50 +62,52 @@ public class ProtocolCodec {
         }
     }
 
-    public void tryEncode(ByteBuf decoded, StarGatePacket packet) throws Exception {
-        decoded.writeByte(packet.getPacketId());
+    public void tryEncode(ByteBuf encoded, StarGatePacket packet) throws Exception {
+        ByteBuf payload = null;
+        try {
+            encoded.writeByte(packet.getPacketId());
+            if (packet.isResponse() || packet.sendsResponse()){
+                encoded.writeInt(packet.getResponseId());
+            }
 
-        ByteBuf payload = decoded.alloc().buffer();
-        packet.encodePayload(payload);
+            payload = encoded.alloc().buffer();
+            packet.encodePayload(payload);
 
-        int bodyLength = payload.readableBytes();
-        if (packet.isResponse() || packet.sendsResponse()){
-            bodyLength += 4;
-        }
-
-        decoded.writeInt(bodyLength);
-        decoded.writeBytes(payload);
-        payload.release();
-
-        if (packet.isResponse() || packet.sendsResponse()){
-            decoded.writeInt(packet.getResponseId());
+            int bodyLength = payload.readableBytes();
+            encoded.writeInt(bodyLength);
+            encoded.writeBytes(payload);
+        } finally {
+            ReferenceCountUtil.release(packet);
+            if (payload != null) {
+                payload.release();
+            }
         }
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
         byte packetId = encoded.readByte(); // Packet id
         StarGatePacket packet = this.constructPacket(packetId);
-        if (packet == null){
-            return null;
+        if (packet == null) {
+            packet = new UnknownPacket();
+            ((UnknownPacket) packet).setPacketId(packetId);
+        }
+
+        if (packet.isResponse() || packet.sendsResponse()){
+            packet.setResponseId(encoded.readInt());
         }
 
         int bodyLength = encoded.readInt();
         if (!encoded.isReadable(bodyLength)){
-            encoded.resetReaderIndex(); // Excepting missing data.
+            // Excepting missing data.
             return null;
         }
 
-        if (packet.isResponse() || packet.sendsResponse()){
-            bodyLength -= 4;
-        }
-
         ByteBuf payload = encoded.alloc().buffer(bodyLength);
-        encoded.readBytes(payload);
-        packet.decodePayload(payload);
-        payload.release();
-
-        if (packet.isResponse() || packet.sendsResponse()){
-            packet.setResponseId(encoded.readInt());
+        try {
+            encoded.readBytes(payload);
+            packet.decodePayload(payload);
+        } finally {
+            payload.release();
         }
         return packet;
     }

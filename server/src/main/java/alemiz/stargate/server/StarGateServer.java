@@ -17,8 +17,7 @@ package alemiz.stargate.server;
 
 
 import alemiz.stargate.codec.ProtocolCodec;
-import alemiz.stargate.handler.PacketDecoder;
-import alemiz.stargate.handler.PacketEncoder;
+import alemiz.stargate.handler.PacketDeEncoder;
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.server.handler.ServerChannelHandler;
 import alemiz.stargate.utils.ServerLoader;
@@ -48,6 +47,7 @@ public class StarGateServer extends Thread {
     private final Map<InetSocketAddress, ServerSession> starGateSessionMap = new ConcurrentHashMap<>();
     private StarGateServerListener serverListener;
 
+    private final int protocolVersion = 1;
     private final String password;
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
@@ -174,6 +174,10 @@ public class StarGateServer extends Thread {
         return this.password;
     }
 
+    public int getProtocolVersion() {
+        return this.protocolVersion;
+    }
+
     public void setServerListener(StarGateServerListener serverListener) {
         this.serverListener = serverListener;
     }
@@ -193,8 +197,7 @@ public class StarGateServer extends Thread {
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDecoder(this.server.getProtocolCodec(), this.server.getLogger()));
-            pipeline.addLast(new PacketEncoder(this.server.getProtocolCodec(), this.server.getLogger()));
+            pipeline.addLast(new PacketDeEncoder(this.server.getProtocolCodec(), this.server.getLogger()));
             pipeline.addLast(new ServerChannelHandler(this.server));
         }
     }

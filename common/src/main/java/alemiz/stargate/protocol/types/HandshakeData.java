@@ -25,23 +25,27 @@ public class HandshakeData {
         PacketHelper.writeInt(byteBuf, handshakeData.software.ordinal());
         PacketHelper.writeString(byteBuf, handshakeData.clientName);
         PacketHelper.writeString(byteBuf, handshakeData.password);
+        PacketHelper.writeInt(byteBuf, handshakeData.protocolVersion);
     }
 
     public static HandshakeData decodeData(ByteBuf byteBuf){
         SOFTWARE software = SOFTWARE.values()[PacketHelper.readInt(byteBuf)];
         String clientName = PacketHelper.readString(byteBuf);
         String password = PacketHelper.readString(byteBuf);
-        return new HandshakeData(clientName, password, software);
+        int protocolVersion = PacketHelper.readInt(byteBuf);
+        return new HandshakeData(clientName, password, software, protocolVersion);
     }
 
     private final String clientName;
     private final String password;
     private final SOFTWARE software;
+    private final int protocolVersion;
 
-    public HandshakeData(String clientName, String password, SOFTWARE software){
+    public HandshakeData(String clientName, String password, SOFTWARE software, int protocolVersion){
         this.clientName = clientName;
         this.password = password;
         this.software = software;
+        this.protocolVersion = protocolVersion;
     }
 
     public String getClientName() {
@@ -54,6 +58,10 @@ public class HandshakeData {
 
     public SOFTWARE getSoftware() {
         return this.software;
+    }
+
+    public int getProtocolVersion() {
+        return this.protocolVersion;
     }
 
     public enum SOFTWARE {
