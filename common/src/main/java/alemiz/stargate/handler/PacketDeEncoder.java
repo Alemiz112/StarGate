@@ -51,8 +51,9 @@ public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
             StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
             if (packet == null) {
                 buffer.resetReaderIndex();
+            } else {
+                out.add(packet);
             }
-            out.add(packet);
         }catch (Exception e){
             byte packetId = buffer.getByte(index + 2);
             buffer.skipBytes(buffer.readableBytes());
