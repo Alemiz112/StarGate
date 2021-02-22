@@ -40,13 +40,9 @@ public abstract class SessionHandler<T extends StarGateSession> implements StarG
 
     @Override
     public boolean handleUnknown(UnknownPacket packet) {
-        try {
-            this.session.getLogger().info("Received UnknownPacket packetId="+packet.getPacketId()+" payload="+(packet.getPayload() == null ?
-                    "null" :
-                    ByteBufUtil.prettyHexDump(packet.getPayload())));
-        } finally {
-            packet.release();
-        }
+        this.session.getLogger().info("Received UnknownPacket packetId="+packet.getPacketId()+" payload="+(packet.getPayload() == null ?
+                "null" :
+                ByteBufUtil.prettyHexDump(packet.getPayload())));
         return true;
     }
 }

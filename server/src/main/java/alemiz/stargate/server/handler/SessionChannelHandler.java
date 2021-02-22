@@ -13,52 +13,36 @@
  *  limitations under the License.
  */
 
-package alemiz.stargate.client;
+package alemiz.stargate.server.handler;
 
 import alemiz.stargate.protocol.StarGatePacket;
+import alemiz.stargate.server.ServerSession;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.net.InetSocketAddress;
+public class SessionChannelHandler extends SimpleChannelInboundHandler<StarGatePacket> {
 
-public class ClientChannelHandler extends SimpleChannelInboundHandler<StarGatePacket> {
+    public static final String NAME = "stargate-server-session-handler";
+    private final ServerSession session;
 
-    private final StarGateClient client;
-
-    public ClientChannelHandler(StarGateClient client){
-        this.client = client;
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-        this.client.onConnect(address, ctx);
+    public SessionChannelHandler(ServerSession session) {
+        this.session = session;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        this.client.onDisconnect();
+        this.session.getServer().onSessionDisconnect(session);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, StarGatePacket packet) throws Exception {
-        ClientSession session = this.client.getSession();
-        if (session != null) {
-            session.onPacket(packet);
-        }
+        this.session.onPacket(packet);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-        this.client.getLogger().logException(e);
-        ClientSession session = this.client.getSession();
-        if (session == null){
-            return;
-        }
-
-        session.close();
-        if (this.client.getClientListener() != null){
-            this.client.getClientListener().onSessionDisconnected(this.client.getSession());
-        }
+        this.session.getLogger().logException(e);
+        this.session.close();
+        this.session.getServer().onSessionDisconnect(this.session);
     }
 }

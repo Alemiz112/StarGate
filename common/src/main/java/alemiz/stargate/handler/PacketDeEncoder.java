@@ -15,6 +15,7 @@
 
 package alemiz.stargate.handler;
 
+import alemiz.stargate.codec.PacketHeader;
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.utils.StarGateLogger;
@@ -37,20 +38,20 @@ public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-        if (!buffer.isReadable(11)) { // Magic + Packet ID + response ID + body length
-            return; // If packet header is not readable full packet was not received
+        if (!buffer.isReadable(2)) {
+            return;
+        }
+
+        if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC) {
+            throw new StarGateException("Received wrong magic");
         }
 
         int index = buffer.readerIndex();
-        buffer.markReaderIndex();
-        if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC){
-            throw new StarGateException("Received wrong magic");
-        }
 
         try {
             StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
             if (packet == null) {
-                buffer.resetReaderIndex();
+                buffer.readerIndex(index);
             } else {
                 out.add(packet);
             }

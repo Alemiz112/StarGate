@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alemiz
+ * Copyright 2021 Alemiz
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -18,37 +18,50 @@ package alemiz.stargate.server.handler;
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.HandshakePacket;
 import alemiz.stargate.protocol.ServerHandshakePacket;
-import alemiz.stargate.server.ServerSession;
-import alemiz.stargate.session.SessionHandler;
+import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.protocol.types.HandshakeData;
+import alemiz.stargate.server.ServerSession;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
-public class HandshakeHandler extends SessionHandler<ServerSession> {
+public class SessionHandshakeHandler extends SimpleChannelInboundHandler<StarGatePacket> {
 
-    public HandshakeHandler(ServerSession session) {
-        super(session);
+    public static final String NAME = "server-handshake-handler";
+    private final ServerSession session;
+
+    public SessionHandshakeHandler(ServerSession session) {
+        this.session = session;
     }
 
     @Override
-    public boolean handleHandshake(HandshakePacket packet) {
+    protected void channelRead0(ChannelHandlerContext ctx, StarGatePacket msg) throws Exception {
+        if (!(msg instanceof HandshakePacket)) {
+            // At this point we do not allow other packets
+            return;
+        }
+
+        HandshakePacket packet = (HandshakePacket) msg;
         HandshakeData handshakeData = packet.getHandshakeData();
         this.session.setHandshakeData(handshakeData);
         if (!this.session.getServer().getPassword().equals(handshakeData.getPassword())){
             this.session.getLogger().warn("Client "+handshakeData.getClientName()+" connected with wrong password!");
             this.session.disconnect(DisconnectPacket.REASON.WRONG_PASSWORD);
-            return true;
+            return;
         }
 
         if (this.session.getServer().getProtocolVersion() != handshakeData.getProtocolVersion()) {
             this.session.getLogger().warn("Client "+handshakeData.getClientName()+" connected with incompatible protocol version ("+handshakeData.getProtocolVersion()+")!");
             this.session.disconnect(DisconnectPacket.REASON.INCORRECT_VERSION);
-            return true;
+            return;
         }
+
+        // Remove handshake handler
+        ctx.pipeline().remove(NAME);
 
         this.session.setAuthenticated(true);
         this.session.setPacketHandler(new ConnectedHandler(this.session));
         this.session.getLogger().info("New client connected! Name: "+handshakeData.getClientName()+" Software: "+handshakeData.getSoftware().name());
         this.session.sendPacket(new ServerHandshakePacket());
         this.session.getServer().onSessionAuthenticated(this.session);
-        return true;
     }
 }

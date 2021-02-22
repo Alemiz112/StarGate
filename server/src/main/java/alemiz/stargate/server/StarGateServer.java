@@ -17,9 +17,8 @@ package alemiz.stargate.server;
 
 
 import alemiz.stargate.codec.ProtocolCodec;
-import alemiz.stargate.handler.PacketDeEncoder;
 import alemiz.stargate.protocol.DisconnectPacket;
-import alemiz.stargate.server.handler.ServerChannelHandler;
+import alemiz.stargate.server.handler.StarGateServerInitializer;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.bootstrap.ServerBootstrap;
@@ -98,22 +97,21 @@ public class StarGateServer extends Thread {
         this.interrupt();
     }
 
-    public void onSessionCreation(InetSocketAddress address, ChannelHandlerContext ctx){
-        ServerSession session = new ServerSession(address, ctx.channel(), this);
+    public ServerSession onSessionCreation(InetSocketAddress address, SocketChannel channel){
+        ServerSession session = new ServerSession(address, channel, this);
         boolean success = this.serverListener == null || this.serverListener.onSessionCreated(address, session);
 
         if (!success){
-            session.close();
-            return;
+            return null;
         }
 
         ServerSession oldSession = this.starGateSessionMap.remove(address);
         if (oldSession != null){
             oldSession.disconnect(DisconnectPacket.REASON.ANOTHER_LOCATION_LOGIN);
-            return;
         }
         this.getLogger().debug("New StarGate session was created "+address);
         this.starGateSessionMap.put(address, session);
+        return session;
     }
 
     public void onSessionAuthenticated(ServerSession session){
@@ -122,11 +120,11 @@ public class StarGateServer extends Thread {
         }
     }
 
-    public void onSessionDisconnect(InetSocketAddress address, ServerSession session){
+    public void onSessionDisconnect(ServerSession session){
         if (this.serverListener != null){
             this.serverListener.onSessionDisconnected(session);
         }
-        this.starGateSessionMap.remove(address);
+        this.starGateSessionMap.remove(session.getAddress());
     }
 
     public ServerLoader getLoader() {
@@ -184,21 +182,5 @@ public class StarGateServer extends Thread {
 
     public StarGateServerListener getServerListener() {
         return this.serverListener;
-    }
-
-    private static class StarGateServerInitializer extends ChannelInitializer<SocketChannel> {
-
-        private final StarGateServer server;
-
-        public StarGateServerInitializer(StarGateServer server){
-            this.server = server;
-        }
-
-        @Override
-        protected void initChannel(SocketChannel channel) throws Exception {
-            ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDeEncoder(this.server.getProtocolCodec(), this.server.getLogger()));
-            pipeline.addLast(new ServerChannelHandler(this.server));
-        }
     }
 }

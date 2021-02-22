@@ -63,13 +63,14 @@ public class ProtocolCodec {
     }
 
     public void tryEncode(ByteBuf encoded, StarGatePacket packet) throws Exception {
+        PacketHeader header = new PacketHeader();
+        header.setPacketId(packet.getPacketId());
+        header.setSupportsResponse(packet.isResponse() || packet.sendsResponse());
+        header.setResponseId(packet.getResponseId());
+        header.encode(encoded);
+
         ByteBuf payload = null;
         try {
-            encoded.writeByte(packet.getPacketId());
-            if (packet.isResponse() || packet.sendsResponse()){
-                encoded.writeInt(packet.getResponseId());
-            }
-
             payload = encoded.alloc().buffer();
             packet.encodePayload(payload);
 
@@ -85,21 +86,28 @@ public class ProtocolCodec {
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
-        byte packetId = encoded.readByte(); // Packet id
-        StarGatePacket packet = this.constructPacket(packetId);
-        if (packet == null) {
-            packet = new UnknownPacket();
-            ((UnknownPacket) packet).setPacketId(packetId);
+        if (!PacketHeader.isReadable(encoded)) {
+            // We do not have complete header
+            return null;
         }
 
-        if (packet.isResponse() || packet.sendsResponse()){
-            packet.setResponseId(encoded.readInt());
-        }
+        PacketHeader header = new PacketHeader();
+        header.decode(encoded);
 
         int bodyLength = encoded.readInt();
         if (!encoded.isReadable(bodyLength)){
-            // Excepting missing data.
+            // Packet payload is not complete
             return null;
+        }
+
+        StarGatePacket packet = this.constructPacket(header.getPacketId());
+        if (packet == null) {
+            packet = new UnknownPacket();
+            ((UnknownPacket) packet).setPacketId(header.getPacketId());
+        }
+
+        if (header.isSupportsResponse()) {
+            packet.setResponseId(header.getResponseId());
         }
 
         ByteBuf payload = encoded.alloc().buffer(bodyLength);

@@ -17,12 +17,10 @@ package alemiz.stargate.server;
 
 import alemiz.stargate.protocol.*;
 import alemiz.stargate.protocol.types.PingEntry;
-import alemiz.stargate.server.handler.HandshakeHandler;
 import alemiz.stargate.session.SessionHandler;
 import alemiz.stargate.session.StarGateSession;
 import alemiz.stargate.protocol.types.HandshakeData;
 import alemiz.stargate.utils.StarGateLogger;
-import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.util.internal.PlatformDependent;
@@ -50,7 +48,6 @@ public class ServerSession extends StarGateSession {
     public ServerSession(InetSocketAddress address, Channel channel, StarGateServer server){
         super(address, channel);
         this.server = server;
-        this.packetHandler = new HandshakeHandler(this);
         this.eventLoop.scheduleAtFixedRate(this::onPingHook, StarGateSession.PING_INTERVAL, StarGateSession.PING_INTERVAL, TimeUnit.SECONDS);
     }
 
