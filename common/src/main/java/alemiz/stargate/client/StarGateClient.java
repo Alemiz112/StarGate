@@ -30,8 +30,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class StarGateClient extends Thread {
@@ -46,7 +48,7 @@ public class StarGateClient extends Thread {
     private ClientSession session;
 
     private StarGateClientListener clientListener;
-    private SessionHandler<ClientSession> customHandler;
+    private final List<SessionHandler<ClientSession>> customHandlers = new ObjectArrayList<>();
 
     public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader) {
         this.loader = loader;
@@ -160,12 +162,25 @@ public class StarGateClient extends Thread {
         return this.handshakeData.getClientName();
     }
 
+    @Deprecated
     public void setCustomHandler(SessionHandler<ClientSession> customHandler) {
-        this.customHandler = customHandler;
+        this.customHandlers.add(customHandler);
     }
 
-    public SessionHandler<ClientSession> getCustomHandler() {
-        return this.customHandler;
+    public void addCustomHandler(SessionHandler<ClientSession> customHandler) {
+        this.customHandlers.add(customHandler);
+    }
+
+    public boolean removeCustomHandler(SessionHandler<ClientSession> customHandler) {
+        return this.customHandlers.remove(customHandler);
+    }
+
+    public void clearCustomHandlers() {
+        this.customHandlers.clear();
+    }
+
+    public List<SessionHandler<ClientSession>> getCustomHandlers() {
+        return this.customHandlers;
     }
 
     public void setClientListener(StarGateClientListener clientListener) {

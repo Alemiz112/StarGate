@@ -24,9 +24,11 @@ import alemiz.stargate.utils.StarGateLogger;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.util.internal.PlatformDependent;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.NonNull;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +40,7 @@ public class ServerSession extends StarGateSession {
     private final StarGateServer server;
     private final Queue<StarGatePacket> queuedPackets = PlatformDependent.newMpscQueue();
 
-    private SessionHandler<ServerSession> customHandler;
-
+    private final List<SessionHandler<ServerSession>> customHandlers = new ObjectArrayList<>();
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
 
     private HandshakeData handshakeData;
@@ -55,11 +56,13 @@ public class ServerSession extends StarGateSession {
     public boolean onPacket(StarGatePacket packet) {
         boolean handled = super.onPacket(packet);
 
-        if (this.customHandler != null){
+        if (!this.customHandlers.isEmpty()) {
             try {
-               if (packet.handle(this.customHandler)){
-                   handled = true;
-               }
+                for (SessionHandler<?> handler : this.customHandlers) {
+                    if (packet.handle(handler)){
+                        handled = true;
+                    }
+                }
             }catch (Exception e){
                 this.getLogger().error("Error occurred in custom packet handler!", e);
             }
@@ -195,11 +198,24 @@ public class ServerSession extends StarGateSession {
         return this.handshakeData;
     }
 
-    public SessionHandler<ServerSession> getCustomHandler() {
-        return this.customHandler;
+    @Deprecated
+    public void setCustomHandler(SessionHandler<ServerSession> customHandler) {
+        this.customHandlers.add(customHandler);
     }
 
-    public void setCustomHandler(SessionHandler<ServerSession> customHandler) {
-        this.customHandler = customHandler;
+    public void addCustomHandler(SessionHandler<ServerSession> customHandler) {
+        this.customHandlers.add(customHandler);
+    }
+
+    public boolean removeCustomHandler(SessionHandler<ServerSession> customHandler) {
+        return this.customHandlers.remove(customHandler);
+    }
+
+    public void clearCustomHandlers() {
+        this.customHandlers.clear();
+    }
+
+    public List<SessionHandler<ServerSession>> getCustomHandlers() {
+        return this.customHandlers;
     }
 }
