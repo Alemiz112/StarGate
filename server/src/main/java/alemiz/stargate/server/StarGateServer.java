@@ -46,7 +46,7 @@ public class StarGateServer extends Thread {
     private final Map<InetSocketAddress, ServerSession> starGateSessionMap = new ConcurrentHashMap<>();
     private StarGateServerListener serverListener;
 
-    private final int protocolVersion = 1;
+    private final int protocolVersion = 2;
     private final String password;
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
