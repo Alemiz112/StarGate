@@ -35,8 +35,16 @@ public class PacketHeader {
             return false;
         }
 
-        // Contains response id ? Packet ID + Response + ResponseID : PacketID + No Response
-        return buffer.getBoolean(buffer.readerIndex() + 2) ? buffer.isReadable(6) : buffer.isReadable(2);
+        int index = buffer.readerIndex();
+        try {
+            buffer.readByte(); // PacketID
+            if (buffer.readBoolean()) {
+                return buffer.isReadable(4); // ResponseID
+            }
+            return true;
+        } finally {
+            buffer.readerIndex(index);
+        }
     }
 
     public void encode(ByteBuf encoded) {

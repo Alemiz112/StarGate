@@ -42,11 +42,10 @@ public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
             return;
         }
 
+        int index = buffer.readerIndex();
         if (buffer.readShort() != ProtocolCodec.STARGATE_MAGIC) {
             throw new StarGateException("Received wrong magic");
         }
-
-        int index = buffer.readerIndex();
 
         try {
             StarGatePacket packet = this.protocolCodec.tryDecode(buffer);
