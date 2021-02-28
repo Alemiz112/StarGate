@@ -63,42 +63,35 @@ public class ProtocolCodec {
     }
 
     public void tryEncode(ByteBuf encoded, StarGatePacket packet) throws Exception {
-        PacketHeader header = new PacketHeader();
-        header.setPacketId(packet.getPacketId());
-        header.setSupportsResponse(packet.isResponse() || packet.sendsResponse());
-        header.setResponseId(packet.getResponseId());
-        header.encode(encoded);
-
-        ByteBuf payload = null;
+        ByteBuf buffer = encoded.alloc().ioBuffer();
         try {
-            payload = encoded.alloc().buffer();
-            packet.encodePayload(payload);
+            PacketHeader header = packet.createHeader();
+            header.encode(buffer);
+            packet.encodePayload(buffer);
 
-            int bodyLength = payload.readableBytes();
-            encoded.writeInt(bodyLength);
-            encoded.writeBytes(payload);
+            encoded.writeInt(buffer.readableBytes());
+            encoded.writeBytes(buffer);
         } finally {
+            buffer.release();
             ReferenceCountUtil.release(packet);
-            if (payload != null) {
-                payload.release();
-            }
         }
     }
 
     public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
-        if (!PacketHeader.isReadable(encoded)) {
-            // We do not have complete header
+        if (!encoded.isReadable(4)) {
+            // Tried to decode invalid buffer
             return null;
         }
 
+        int length = encoded.readInt();
+        if (!encoded.isReadable(length)) {
+            // Received incomplete packet
+            return null;
+        }
+
+        ByteBuf buffer = encoded.readSlice(length);
         PacketHeader header = new PacketHeader();
-        header.decode(encoded);
-
-        int bodyLength = encoded.readInt();
-        if (!encoded.isReadable(bodyLength)){
-            // Packet payload is not complete
-            return null;
-        }
+        header.decode(buffer);
 
         StarGatePacket packet = this.constructPacket(header.getPacketId());
         if (packet == null) {
@@ -110,13 +103,7 @@ public class ProtocolCodec {
             packet.setResponseId(header.getResponseId());
         }
 
-        ByteBuf payload = encoded.alloc().buffer(bodyLength);
-        try {
-            encoded.readBytes(payload);
-            packet.decodePayload(payload);
-        } finally {
-            payload.release();
-        }
+        packet.decodePayload(buffer);
         return packet;
     }
 }

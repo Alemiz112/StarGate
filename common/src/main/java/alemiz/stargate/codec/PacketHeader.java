@@ -30,23 +30,6 @@ public class PacketHeader {
     public PacketHeader() {
     }
 
-    public static boolean isReadable(ByteBuf buffer) {
-        if (!buffer.isReadable(2)) { // Has PacketID, SupportsResponse
-            return false;
-        }
-
-        int index = buffer.readerIndex();
-        try {
-            buffer.readByte(); // PacketID
-            if (buffer.readBoolean()) {
-                return buffer.isReadable(4); // ResponseID
-            }
-            return true;
-        } finally {
-            buffer.readerIndex(index);
-        }
-    }
-
     public void encode(ByteBuf encoded) {
         encoded.writeByte(this.packetId);
         encoded.writeBoolean(this.supportsResponse);
