@@ -20,9 +20,9 @@ import alemiz.stargate.protocol.PingPacket;
 import alemiz.stargate.protocol.PongPacket;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.StarGateServer;
-import alemiz.stargate.session.SessionHandler;
+import alemiz.stargate.session.CommonSessionHandler;
 
-public class ConnectedHandler extends SessionHandler<ServerSession> {
+public class ConnectedHandler extends CommonSessionHandler<ServerSession> {
 
     public ConnectedHandler(ServerSession session) {
         super(session);

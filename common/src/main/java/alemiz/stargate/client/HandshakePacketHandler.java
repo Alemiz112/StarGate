@@ -16,9 +16,9 @@
 package alemiz.stargate.client;
 
 import alemiz.stargate.protocol.ServerHandshakePacket;
-import alemiz.stargate.session.SessionHandler;
+import alemiz.stargate.session.CommonSessionHandler;
 
-public class HandshakePacketHandler extends SessionHandler<ClientSession> {
+public class HandshakePacketHandler extends CommonSessionHandler<ClientSession> {
 
     public HandshakePacketHandler(ClientSession session) {
         super(session);

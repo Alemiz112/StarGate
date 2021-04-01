@@ -55,6 +55,9 @@ public class ServerSession extends StarGateSession {
     @Override
     public boolean onPacket(StarGatePacket packet) {
         boolean handled = super.onPacket(packet);
+        if (handled) {
+            return true;
+        }
 
         if (!this.customHandlers.isEmpty()) {
             try {
