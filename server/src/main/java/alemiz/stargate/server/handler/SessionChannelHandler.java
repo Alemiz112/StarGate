@@ -31,7 +31,7 @@ public class SessionChannelHandler extends SimpleChannelInboundHandler<StarGateP
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        this.session.getServer().onSessionDisconnect(session);
+        this.session.getServer().onSessionDisconnect(this.session);
     }
 
     @Override

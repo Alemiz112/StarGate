@@ -17,7 +17,6 @@ package alemiz.stargate.codec;
 
 import alemiz.stargate.protocol.*;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.ReferenceCountUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
@@ -73,7 +72,6 @@ public class ProtocolCodec {
             encoded.writeBytes(buffer);
         } finally {
             buffer.release();
-            ReferenceCountUtil.release(packet);
         }
     }
 

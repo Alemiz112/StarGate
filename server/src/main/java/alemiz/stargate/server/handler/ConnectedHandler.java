@@ -50,7 +50,7 @@ public class ConnectedHandler extends SessionHandler<ServerSession> {
             this.session.getLogger().debug("Tried to forward packet to unknown client "+packet.getClientName()+"!");
             return true;
         }
-        clientSession.sendRaw(packet.createPacket());
+        clientSession.sendPacket(packet.getPacket().retain());
         return true;
     }
 }

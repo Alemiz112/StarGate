@@ -15,12 +15,12 @@
 
 package alemiz.stargate.protocol;
 
-import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.codec.StarGatePackets;
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.protocol.types.PacketHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.ReferenceCounted;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -28,48 +28,44 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true, callSuper = false)
-public class ForwardPacket extends StarGatePacket {
+public class ForwardPacket extends StarGatePacket implements ReferenceCounted {
 
     public static ForwardPacket from(String clientName, StarGatePacket packet){
         ForwardPacket forwardPacket = new ForwardPacket();
         forwardPacket.setClientName(clientName);
-        forwardPacket.setForwardPacketId(packet.getPacketId());
 
-        ByteBuf buf = ByteBufAllocator.DEFAULT.directBuffer();
-        packet.encodePayload(buf);
+        UnknownPacket unknownPacket = new UnknownPacket();
+        unknownPacket.setPacketId(packet.getPacketId());
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer();
+        packet.encodePayload(buffer);
+        unknownPacket.setPayload(buffer);
 
-        byte[] payload = new byte[buf.readableBytes()];
-        buf.readBytes(payload);
-        buf.release();
-
-        forwardPacket.setPayload(payload);
+        forwardPacket.setPacket(unknownPacket);
         return forwardPacket;
     }
 
     private String clientName;
-    private byte forwardPacketId;
-    private byte[] payload;
+    private UnknownPacket packet;
 
     @Override
     public void encodePayload(ByteBuf byteBuf) {
         PacketHelper.writeString(byteBuf, this.clientName);
-        byteBuf.writeByte(this.forwardPacketId);
-        PacketHelper.writeByteArray(byteBuf, this.payload);
+        byteBuf.writeByte(this.packet.getPacketId());
+
+        ByteBuf payload = this.packet.getPayload();
+        PacketHelper.writeInt(byteBuf, payload.readableBytes());
+        byteBuf.writeBytes(payload);
     }
 
     @Override
     public void decodePayload(ByteBuf byteBuf) {
         this.clientName = PacketHelper.readString(byteBuf);
-        this.forwardPacketId = byteBuf.readByte();
-        this.payload = PacketHelper.readByteArray(byteBuf);
-    }
 
-    public ByteBuf createPacket(){
-        ByteBuf buf = ByteBufAllocator.DEFAULT.directBuffer();
-        buf.writeShort(ProtocolCodec.STARGATE_MAGIC);
-        buf.writeByte(this.forwardPacketId);
-        PacketHelper.writeByteArray(buf, this.payload);
-        return buf;
+        this.packet = new UnknownPacket();
+        this.packet.setPacketId(byteBuf.readByte());
+
+        int length = PacketHelper.readInt(byteBuf);
+        this.packet.decodePayload(byteBuf.slice(byteBuf.readerIndex(), length));
     }
 
     @Override
@@ -80,5 +76,61 @@ public class ForwardPacket extends StarGatePacket {
     @Override
     public byte getPacketId() {
         return StarGatePackets.FORWARD_PACKET;
+    }
+
+    @Override
+    public int refCnt() {
+        if (this.packet == null) {
+            return 0;
+        }
+        return this.packet.refCnt();
+    }
+
+    @Override
+    public ForwardPacket retain() {
+        if (this.packet != null) {
+            this.packet.retain();
+        }
+        return this;
+    }
+
+    @Override
+    public ForwardPacket retain(int increment) {
+        if (this.packet != null) {
+            this.packet.retain(increment);
+        }
+        return this;
+    }
+
+    @Override
+    public ForwardPacket touch() {
+        if (this.packet != null) {
+            this.packet.touch();
+        }
+        return this;
+    }
+
+    @Override
+    public ForwardPacket touch(Object hint) {
+        if (this.packet != null) {
+            this.packet.touch(hint);
+        }
+        return this;
+    }
+
+    @Override
+    public boolean release() {
+        if (this.packet != null) {
+            return this.packet.release();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean release(int decrement) {
+        if (this.packet != null) {
+            this.packet.release(decrement);
+        }
+        return false;
     }
 }

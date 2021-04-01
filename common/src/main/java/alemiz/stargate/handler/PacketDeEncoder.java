@@ -15,7 +15,6 @@
 
 package alemiz.stargate.handler;
 
-import alemiz.stargate.codec.PacketHeader;
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.utils.StarGateLogger;
