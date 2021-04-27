@@ -17,7 +17,7 @@ package alemiz.stargate.events;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.server.ServerSession;
-import dev.waterdog.event.CancellableEvent;
+import dev.waterdog.waterdogpe.event.CancellableEvent;
 
 public class ClientConnectedEvent extends ServerEvent implements CancellableEvent {
 

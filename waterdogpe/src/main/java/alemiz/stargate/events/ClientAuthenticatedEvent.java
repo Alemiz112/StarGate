@@ -17,8 +17,8 @@ package alemiz.stargate.events;
 
 import alemiz.stargate.StarGate;
 import alemiz.stargate.server.ServerSession;
-import dev.waterdog.event.AsyncEvent;
-import dev.waterdog.event.CancellableEvent;
+import dev.waterdog.waterdogpe.event.AsyncEvent;
+import dev.waterdog.waterdogpe.event.CancellableEvent;
 
 @AsyncEvent
 public class ClientAuthenticatedEvent extends ServerEvent implements CancellableEvent {

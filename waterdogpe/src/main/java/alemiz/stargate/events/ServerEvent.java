@@ -18,7 +18,7 @@ package alemiz.stargate.events;
 import alemiz.stargate.StarGate;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.StarGateServer;
-import dev.waterdog.event.Event;
+import dev.waterdog.waterdogpe.event.Event;
 
 public class ServerEvent extends Event {
 
