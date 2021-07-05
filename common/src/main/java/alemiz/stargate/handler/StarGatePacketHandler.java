@@ -59,8 +59,15 @@ public interface StarGatePacketHandler {
         return false;
     }
 
-    default boolean handleUnknown(UnknownPacket packet) {
+    default boolean handlePlayerPingRequest(PlayerPingRequestPacket packet) {
         return false;
     }
 
+    default boolean handlePlayerPingResponse(PlayerPingResponsePacket packet) {
+        return false;
+    }
+
+    default boolean handleUnknown(UnknownPacket packet) {
+        return false;
+    }
 }

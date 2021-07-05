@@ -16,13 +16,12 @@
 package alemiz.stargate.handler;
 
 import alemiz.stargate.StarGate;
-import alemiz.stargate.protocol.ServerInfoRequestPacket;
-import alemiz.stargate.protocol.ServerInfoResponsePacket;
-import alemiz.stargate.protocol.ServerTransferPacket;
+import alemiz.stargate.protocol.*;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.handler.ConnectedHandler;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +79,22 @@ public class PacketHandler extends ConnectedHandler {
             return false;
         }
         player.connect(serverInfo);
+        return true;
+    }
+
+    @Override
+    public boolean handlePlayerPingRequest(PlayerPingRequestPacket packet) {
+        ProxiedPlayer player = this.loader.getProxy().getPlayer(packet.getPlayerName());
+        if (player == null) {
+            return false;
+        }
+
+        PlayerPingResponsePacket response = new PlayerPingResponsePacket();
+        response.setResponseId(packet.getResponseId());
+        response.setUpstreamPing(player.getPing());
+        // Bungee doesnt have implemented downstream ping :/
+        response.setDownstreamPing(0);
+        this.session.sendPacket(response);
         return true;
     }
 }

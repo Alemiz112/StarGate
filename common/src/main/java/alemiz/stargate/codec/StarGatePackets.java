@@ -33,4 +33,6 @@ public interface StarGatePackets {
     byte SERVER_INFO_REQUEST_PACKET = 0x08;
     byte SERVER_INFO_RESPONSE_PACKET = 0x09;
     byte SERVER_TRANSFER_PACKET = 0x0a;
+    byte PLAYER_PING_REQUEST_PACKET = 0x0b;
+    byte PLAYER_PING_RESPONSE_PACKET = 0x0c;
 }

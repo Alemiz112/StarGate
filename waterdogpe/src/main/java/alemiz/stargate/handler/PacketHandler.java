@@ -16,12 +16,11 @@
 package alemiz.stargate.handler;
 
 import alemiz.stargate.StarGate;
-import alemiz.stargate.protocol.ServerInfoRequestPacket;
-import alemiz.stargate.protocol.ServerInfoResponsePacket;
-import alemiz.stargate.protocol.ServerTransferPacket;
+import alemiz.stargate.protocol.*;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.handler.ConnectedHandler;
 import dev.waterdog.waterdogpe.network.ServerInfo;
+import dev.waterdog.waterdogpe.network.session.ServerConnection;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 public class PacketHandler extends ConnectedHandler {
@@ -77,6 +76,25 @@ public class PacketHandler extends ConnectedHandler {
             return false;
         }
         player.connect(serverInfo);
+        return true;
+    }
+
+    @Override
+    public boolean handlePlayerPingRequest(PlayerPingRequestPacket packet) {
+        ProxiedPlayer player = this.loader.getProxy().getPlayer(packet.getPlayerName());
+        if (player == null) {
+            return false;
+        }
+
+        PlayerPingResponsePacket response = new PlayerPingResponsePacket();
+        response.setResponseId(packet.getResponseId());
+        response.setUpstreamPing(player.getPing());
+
+        ServerConnection server = player.getServer();
+        if (server != null && server.isConnected()) {
+            response.setDownstreamPing(server.getDownstream().getLatency());
+        }
+        this.session.sendPacket(response);
         return true;
     }
 }

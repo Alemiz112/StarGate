@@ -16,9 +16,7 @@
 package alemiz.stargate;
 
 import alemiz.stargate.codec.StarGatePackets;
-import alemiz.stargate.protocol.ServerInfoRequestPacket;
-import alemiz.stargate.protocol.ServerInfoResponsePacket;
-import alemiz.stargate.protocol.ServerTransferPacket;
+import alemiz.stargate.protocol.*;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.StarGateServer;
 import alemiz.stargate.utils.BungeeLogger;
@@ -58,6 +56,8 @@ public class StarGate extends Plugin implements ServerLoader {
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_REQUEST_PACKET, ServerInfoRequestPacket.class);
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_RESPONSE_PACKET, ServerInfoResponsePacket.class);
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_TRANSFER_PACKET, ServerTransferPacket.class);
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.PLAYER_PING_REQUEST_PACKET, PlayerPingRequestPacket.class);
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.PLAYER_PING_RESPONSE_PACKET, PlayerPingResponsePacket.class);
         this.server.start();
     }
 
