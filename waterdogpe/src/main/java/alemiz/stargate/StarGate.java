@@ -51,6 +51,7 @@ public class StarGate extends Plugin implements ServerLoader {
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_TRANSFER_PACKET, ServerTransferPacket.class);
         this.server.getProtocolCodec().registerPacket(StarGatePackets.PLAYER_PING_REQUEST_PACKET, PlayerPingRequestPacket.class);
         this.server.getProtocolCodec().registerPacket(StarGatePackets.PLAYER_PING_RESPONSE_PACKET, PlayerPingResponsePacket.class);
+        this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_MANAGE_PACKET, ServerManagePacket.class);
         this.server.start();
     }
 

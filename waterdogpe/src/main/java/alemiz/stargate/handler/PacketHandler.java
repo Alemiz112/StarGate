@@ -97,4 +97,13 @@ public class PacketHandler extends ConnectedHandler {
         this.session.sendPacket(response);
         return true;
     }
+
+    @Override
+    public boolean handleServerManage(ServerManagePacket packet) {
+        if (packet.getAction() == ServerManagePacket.Action.REMOVE) {
+            return this.loader.getProxy().removeServerInfo(packet.getServerName()) != null;
+        }
+        ServerInfo serverInfo = new ServerInfo(packet.getServerName(), packet.getAddress(), packet.getPublicAddress());
+        return this.loader.getProxy().registerServerInfo(serverInfo);
+    }
 }

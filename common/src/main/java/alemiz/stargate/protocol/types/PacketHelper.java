@@ -18,6 +18,7 @@ package alemiz.stargate.protocol.types;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.function.BiConsumer;
@@ -97,5 +98,15 @@ public class PacketHelper {
         for (T value : array){
             consumer.accept(buf, value);
         }
+    }
+
+    public static void writeAddress(ByteBuf buf, InetSocketAddress address) {
+        String hostAddress = address.getAddress().getHostAddress();
+        writeString(buf, hostAddress);
+        writeInt(buf, address.getPort());
+    }
+
+    public static InetSocketAddress readAddress(ByteBuf buf) {
+        return new InetSocketAddress(readString(buf), readInt(buf));
     }
 }

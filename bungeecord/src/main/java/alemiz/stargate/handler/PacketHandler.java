@@ -97,4 +97,28 @@ public class PacketHandler extends ConnectedHandler {
         this.session.sendPacket(response);
         return true;
     }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean handleServerManage(ServerManagePacket packet) {
+        if (packet.getAction() == ServerManagePacket.Action.REMOVE) {
+            return this.loader.getProxy().getServers().remove(packet.getServerName()) != null;
+        }
+
+        if (this.loader.getProxy().getServers().containsKey(packet.getServerName())) {
+            // Server with same name was already registered
+            return false;
+        }
+
+        ServerInfo serverInfo = this.loader.getProxy().constructServerInfo(
+                packet.getServerName(),
+                packet.getAddress(),
+                "",
+                false,
+                packet.getServerType().equals("bedrock"),
+                "default"
+        );
+        this.loader.getProxy().getServers().put(packet.getServerName(), serverInfo);
+        return true;
+    }
 }
