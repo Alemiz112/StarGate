@@ -50,7 +50,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<StarGatePa
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-        this.client.getLogger().logException(e);
+        this.client.getLogger().error("[StarGateClient] An exception was caught!", e);
         this.client.onDisconnect();
     }
 }

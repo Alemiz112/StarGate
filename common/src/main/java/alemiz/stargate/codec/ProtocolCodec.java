@@ -61,44 +61,37 @@ public class ProtocolCodec {
         }
     }
 
-    public void tryEncode(ByteBuf encoded, StarGatePacket packet) throws Exception {
-        ByteBuf buffer = encoded.alloc().ioBuffer();
-        try {
-            PacketHeader header = packet.createHeader();
-            header.encode(buffer);
-            packet.encodePayload(buffer);
-
-            encoded.writeInt(buffer.readableBytes());
-            encoded.writeBytes(buffer);
-        } finally {
-            buffer.release();
+    public void tryEncode(ByteBuf buffer, StarGatePacket packet) throws Exception {
+        if (!buffer.isWritable()) {
+            throw new IllegalStateException("Buffer is not writable!");
         }
+
+        buffer.writeByte(packet.getPacketId());
+
+        boolean supportsResponse = packet.isResponse() || packet.sendsResponse();
+        buffer.writeBoolean(supportsResponse);
+
+        if (supportsResponse) {
+            buffer.writeInt(packet.getResponseId());
+        }
+        packet.encodePayload(buffer);
     }
 
-    public StarGatePacket tryDecode(ByteBuf encoded) throws Exception {
-        if (!encoded.isReadable(4)) {
-            // Tried to decode invalid buffer
+    public StarGatePacket tryDecode(ByteBuf buffer) throws Exception {
+        if (!buffer.isReadable()) {
             return null;
         }
 
-        int length = encoded.readInt();
-        if (!encoded.isReadable(length)) {
-            // Received incomplete packet
-            return null;
-        }
-
-        ByteBuf buffer = encoded.readSlice(length);
-        PacketHeader header = new PacketHeader();
-        header.decode(buffer);
-
-        StarGatePacket packet = this.constructPacket(header.getPacketId());
+        byte packetId = buffer.readByte();
+        StarGatePacket packet = this.constructPacket(packetId);
         if (packet == null) {
             packet = new UnknownPacket();
-            ((UnknownPacket) packet).setPacketId(header.getPacketId());
+            ((UnknownPacket) packet).setPacketId(packetId);
         }
 
-        if (header.isSupportsResponse()) {
-            packet.setResponseId(header.getResponseId());
+        boolean supportsResponse = buffer.readBoolean();
+        if (supportsResponse) {
+            packet.setResponseId(buffer.readInt());
         }
 
         packet.decodePayload(buffer);

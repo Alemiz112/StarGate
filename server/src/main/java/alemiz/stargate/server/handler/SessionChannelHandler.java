@@ -41,7 +41,7 @@ public class SessionChannelHandler extends SimpleChannelInboundHandler<StarGateP
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-        this.session.getLogger().logException(e);
+        this.session.getLogger().error("[" + this.session.getClientName() + "] An exception was caught!", e);
         this.session.close();
         this.session.getServer().onSessionDisconnect(this.session);
     }

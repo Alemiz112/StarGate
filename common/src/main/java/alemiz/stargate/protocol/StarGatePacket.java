@@ -15,7 +15,6 @@
 
 package alemiz.stargate.protocol;
 
-import alemiz.stargate.codec.PacketHeader;
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.buffer.ByteBuf;
@@ -27,14 +26,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class StarGatePacket {
 
     private int responseId;
-
-    public PacketHeader createHeader() {
-        PacketHeader header = new PacketHeader();
-        header.setPacketId(this.getPacketId());
-        header.setSupportsResponse(this.isResponse() || this.sendsResponse());
-        header.setResponseId(this.getResponseId());
-        return header;
-    }
 
     public abstract void encodePayload(ByteBuf byteBuf);
     public abstract void decodePayload(ByteBuf byteBuf);
