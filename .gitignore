@@ -1,9 +1,12 @@
 # Compiled class file
 *.class
 
-# Log file
-logs/
+# Log files
 *.log
+*.log.gz
+
+# BlueJ files
+*.ctxt
 
 # Package Files #
 *.jar
@@ -14,8 +17,28 @@ logs/
 *.tar.gz
 *.rar
 
-# IntelliJ IDEA files
+# JentBrains
+.idea/*
+
+# Allow copyright files
+!.idea/copyright
+
 out/
-.idea/
+
 *.iml
+*.iws
+*.ipr
+
+modules.xml
+
+# Maven files
 target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
