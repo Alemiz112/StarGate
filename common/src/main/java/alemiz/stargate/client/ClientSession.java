@@ -17,10 +17,11 @@ package alemiz.stargate.client;
 
 import alemiz.stargate.protocol.*;
 import alemiz.stargate.protocol.types.PingEntry;
-import alemiz.stargate.session.SessionHandler;
-import alemiz.stargate.session.StarGateSession;
+import alemiz.stargate.handler.SessionHandler;
+import alemiz.stargate.StarGateSession;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.internal.PlatformDependent;
 
 import java.net.InetSocketAddress;
@@ -53,8 +54,7 @@ public class ClientSession extends StarGateSession {
 
     @Override
     public boolean onPacket(StarGatePacket packet) {
-        boolean handled = super.onPacket(packet);
-        if (handled) {
+        if (super.onPacket(packet)) {
             return true;
         }
 
@@ -63,18 +63,14 @@ public class ClientSession extends StarGateSession {
             try {
                 for (SessionHandler<?> handler : handlers) {
                     if (packet.handle(handler)){
-                        handled = true;
+                        return true;
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 this.getLogger().error("Error occurred in custom packet handler!", e);
             }
         }
-
-        if (!handled){
-            this.getLogger().debug("Unhandled packet "+packet);
-        }
-        return handled;
+        return false;
     }
 
     @Override

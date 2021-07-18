@@ -1,19 +1,19 @@
 /*
- * Copyright 2020 Alemiz
+ * Copyright 2021 Alemiz
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
  */
 
-package alemiz.stargate.session;
+package alemiz.stargate;
 
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.protocol.DisconnectPacket;
@@ -22,6 +22,7 @@ import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.utils.StarGateLogger;
 import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -59,19 +60,21 @@ public abstract class StarGateSession {
     }
 
     public boolean onPacket(StarGatePacket packet) {
-        Preconditions.checkNotNull(packet);
+        if (packet == null) {
+            throw new NullPointerException("Tried to handle NULL");
+        }
         boolean handled = this.packetHandler != null && packet.handle(this.packetHandler);
 
-        if (packet.isResponse()){
+        if (packet.isResponse()) {
             CompletableFuture<StarGatePacket> future = this.pendingResponses.remove(packet.getResponseId());
-            if (future != null){
+            if (future != null) {
                 future.complete(packet);
                 handled = true;
             }
         }
 
-        if (this.logInputLevel >= packet.getLogLevel()){
-            this.getLogger().debug("Received "+packet);
+        if (this.logInputLevel >= packet.getLogLevel()) {
+            this.getLogger().debug("Received " + packet);
         }
         return handled;
     }
@@ -113,7 +116,7 @@ public abstract class StarGateSession {
     }
 
     public void disconnect(@NonNull String reason){
-        this.getLogger().info("Closing StarGate connection! Reason: "+reason);
+        this.getLogger().info("Closing StarGate connection! Reason: " + reason);
         DisconnectPacket packet = new DisconnectPacket();
         packet.setReason(reason);
         this.forcePacket(packet);

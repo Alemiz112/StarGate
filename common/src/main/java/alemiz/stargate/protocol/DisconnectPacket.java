@@ -34,7 +34,8 @@ public class DisconnectPacket extends StarGatePacket {
         CLIENT_SHUTDOWN("StarGate client shutdown!"),
         WRONG_PASSWORD("Wrong password!"),
         INCORRECT_VERSION("Incompatible version!"),
-        ANOTHER_LOCATION_LOGIN("Connected from another location!");
+        ANOTHER_LOCATION_LOGIN("Connected from another location!"),
+        INTERNAL_ERROR("Internal error occured!");
 
         private final String message;
 

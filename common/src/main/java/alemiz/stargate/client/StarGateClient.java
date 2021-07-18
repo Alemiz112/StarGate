@@ -15,12 +15,13 @@
 
 package alemiz.stargate.client;
 
-import alemiz.stargate.handler.PacketDeEncoder;
+import alemiz.stargate.pipeline.PacketDeEncoder;
 import alemiz.stargate.codec.ProtocolCodec;
+import alemiz.stargate.pipeline.UnhandledPacketConsumer;
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.StarGatePacket;
 import alemiz.stargate.protocol.types.HandshakeData;
-import alemiz.stargate.session.SessionHandler;
+import alemiz.stargate.handler.SessionHandler;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.bootstrap.Bootstrap;
@@ -51,14 +52,15 @@ public class StarGateClient extends Thread {
     private final List<SessionHandler<ClientSession>> customHandlers = new ObjectArrayList<>();
 
     public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader) {
+        this(address, handshakeData, loader, new NioEventLoopGroup(0, new DefaultThreadFactory("stargate")));
+    }
+
+    public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader, EventLoopGroup eventLoopGroup) {
         this.loader = loader;
         this.address = address;
         this.handshakeData = handshakeData;
         this.protocolCodec = new ProtocolCodec();
-
-        DefaultThreadFactory factory = new DefaultThreadFactory("stargate");
-        this.eventLoopGroup = new NioEventLoopGroup(0, factory);
-
+        this.eventLoopGroup = eventLoopGroup;
         this.setName("StarGate Client #"+handshakeData.getClientName());
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
@@ -86,11 +88,13 @@ public class StarGateClient extends Thread {
         }
     }
 
-    public void onConnect(InetSocketAddress address, ChannelHandlerContext ctx){
-        this.getLogger().info("Client "+this.getClientName()+" has connected!");
-        this.session = new ClientSession(address, ctx.channel(), this);
-        this.session.onConnect();
+    public void onConnect(InetSocketAddress address, ChannelHandlerContext ctx) {
+        this.getLogger().info("Client " + this.getClientName() + " has connected!");
 
+        this.session = new ClientSession(address, ctx.channel(), this);
+        ctx.pipeline().addLast(UnhandledPacketConsumer.NAME, new UnhandledPacketConsumer(session));
+
+        this.session.onConnect();
         if (this.clientListener != null){
             this.clientListener.onSessionCreated(address, session);
         }
@@ -202,7 +206,7 @@ public class StarGateClient extends Thread {
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast(new PacketDeEncoder(this.client.getProtocolCodec(), this.client.getLogger()));
+            pipeline.addLast(PacketDeEncoder.NAME, new PacketDeEncoder(this.client.getProtocolCodec(), this.client.getLogger()));
             pipeline.addLast("timeout-handler", new ReadTimeoutHandler(20));
             pipeline.addLast(new ClientChannelHandler(this.client));
         }

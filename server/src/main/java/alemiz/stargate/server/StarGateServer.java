@@ -18,7 +18,7 @@ package alemiz.stargate.server;
 
 import alemiz.stargate.codec.ProtocolCodec;
 import alemiz.stargate.protocol.DisconnectPacket;
-import alemiz.stargate.server.handler.StarGateServerInitializer;
+import alemiz.stargate.server.pipeline.StarGateServerInitializer;
 import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.bootstrap.ServerBootstrap;
@@ -57,7 +57,6 @@ public class StarGateServer extends Thread {
         this.bindAddress = bindAddress;
         this.protocolCodec = new ProtocolCodec();
         this.password = password;
-
 
         DefaultThreadFactory factory = new DefaultThreadFactory("stargate");
         this.bossLoopGroup = new NioEventLoopGroup(0, factory);

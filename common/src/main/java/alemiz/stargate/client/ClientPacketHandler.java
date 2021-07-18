@@ -16,7 +16,7 @@
 package alemiz.stargate.client;
 
 import alemiz.stargate.protocol.*;
-import alemiz.stargate.session.CommonSessionHandler;
+import alemiz.stargate.handler.CommonSessionHandler;
 
 public class ClientPacketHandler extends CommonSessionHandler<ClientSession> {
 

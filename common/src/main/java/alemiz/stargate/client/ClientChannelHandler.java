@@ -15,9 +15,11 @@
 
 package alemiz.stargate.client;
 
+import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.StarGatePacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.ReferenceCountUtil;
 
 import java.net.InetSocketAddress;
 
@@ -43,14 +45,22 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<StarGatePa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, StarGatePacket packet) throws Exception {
         ClientSession session = this.client.getSession();
-        if (session != null) {
-            session.onPacket(packet);
+        if (session == null) {
+            return;
+        }
+
+        if (!session.onPacket(packet)) {
+            ctx.fireChannelRead(ReferenceCountUtil.retain(packet));
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
         this.client.getLogger().error("[StarGateClient] An exception was caught!", e);
-        this.client.onDisconnect();
+        if (this.client.isConnected()) {
+            this.client.getSession().disconnect(DisconnectPacket.REASON.INTERNAL_ERROR);
+        } else {
+            this.client.onDisconnect();
+        }
     }
 }
