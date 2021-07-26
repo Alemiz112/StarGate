@@ -129,7 +129,7 @@ public class ClientSession extends StarGateSession {
     }
 
     public void reconnect(String reason, boolean send){
-        if (send){
+        if (send) {
             DisconnectPacket packet = new DisconnectPacket();
             packet.setReason(reason);
             this.forcePacket(packet);

@@ -100,13 +100,16 @@ public class StarGateClient extends Thread {
         }
     }
 
-    public void onDisconnect(){
-        if (this.session == null || !this.session.close()){
+    public void onDisconnect() {
+        if (this.session == null) {
             return;
         }
 
-        this.getLogger().warn("StarGate client "+this.getClientName()+" has been disconnected!");
-        if (this.clientListener != null){
+        if (this.session.close()) {
+            this.getLogger().warn("StarGate client " + this.getClientName() + " has been disconnected!");
+        }
+        
+        if (this.clientListener != null) {
             this.clientListener.onSessionDisconnected(this.session);
         }
     }
