@@ -15,6 +15,7 @@
 
 package alemiz.stargate;
 
+import alemiz.stargate.handler.SessionHandler;
 import alemiz.stargate.handler.StarGatePacketHandler;
 import alemiz.stargate.protocol.DisconnectPacket;
 import alemiz.stargate.protocol.PongPacket;
@@ -153,6 +154,10 @@ public abstract class StarGateSession {
     public StarGatePacketHandler getPacketHandler() {
         return this.packetHandler;
     }
+
+    public abstract void addCustomHandler(SessionHandler<?> customHandler);
+
+    public abstract boolean removeCustomHandler(SessionHandler<?> customHandler);
 
     public void setLogInputLevel(int logInputLevel) {
         this.logInputLevel = logInputLevel;

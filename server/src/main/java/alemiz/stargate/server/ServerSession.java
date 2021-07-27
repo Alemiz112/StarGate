@@ -41,7 +41,7 @@ public class ServerSession extends StarGateSession {
     private final StarGateServer server;
     private final Queue<StarGatePacket> queuedPackets = PlatformDependent.newMpscQueue();
 
-    private final List<SessionHandler<ServerSession>> customHandlers = new ObjectArrayList<>();
+    private final List<SessionHandler<?>> customHandlers = new ObjectArrayList<>();
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
 
     private HandshakeData handshakeData;
@@ -204,15 +204,17 @@ public class ServerSession extends StarGateSession {
     }
 
     @Deprecated
-    public void setCustomHandler(SessionHandler<ServerSession> customHandler) {
+    public void setCustomHandler(SessionHandler<?> customHandler) {
         this.customHandlers.add(customHandler);
     }
 
-    public void addCustomHandler(SessionHandler<ServerSession> customHandler) {
+    @Override
+    public void addCustomHandler(SessionHandler<?> customHandler) {
         this.customHandlers.add(customHandler);
     }
 
-    public boolean removeCustomHandler(SessionHandler<ServerSession> customHandler) {
+    @Override
+    public boolean removeCustomHandler(SessionHandler<?> customHandler) {
         return this.customHandlers.remove(customHandler);
     }
 
@@ -220,7 +222,7 @@ public class ServerSession extends StarGateSession {
         this.customHandlers.clear();
     }
 
-    public List<SessionHandler<ServerSession>> getCustomHandlers() {
+    public List<SessionHandler<?>> getCustomHandlers() {
         return this.customHandlers;
     }
 }

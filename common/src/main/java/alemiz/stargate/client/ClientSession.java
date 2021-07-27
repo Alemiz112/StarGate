@@ -58,7 +58,7 @@ public class ClientSession extends StarGateSession {
             return true;
         }
 
-        List<SessionHandler<ClientSession>> handlers = this.client.getCustomHandlers();
+        List<SessionHandler<?>> handlers = this.client.getCustomHandlers();
         if (!handlers.isEmpty()) {
             try {
                 for (SessionHandler<?> handler : handlers) {
@@ -137,6 +137,16 @@ public class ClientSession extends StarGateSession {
         this.getLogger().info("Reconnecting to server! Reason: "+reason);
         this.close();
         this.client.connect();
+    }
+
+    @Override
+    public void addCustomHandler(SessionHandler<?> customHandler) {
+        this.client.addCustomHandler(customHandler);
+    }
+
+    @Override
+    public boolean removeCustomHandler(SessionHandler<?> customHandler) {
+        return this.client.removeCustomHandler(customHandler);
     }
 
     @Override

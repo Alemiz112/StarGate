@@ -49,7 +49,7 @@ public class StarGateClient extends Thread {
     private ClientSession session;
 
     private StarGateClientListener clientListener;
-    private final List<SessionHandler<ClientSession>> customHandlers = new ObjectArrayList<>();
+    private final List<SessionHandler<?>> customHandlers = new ObjectArrayList<>();
 
     public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader) {
         this(address, handshakeData, loader, new NioEventLoopGroup(0, new DefaultThreadFactory("stargate")));
@@ -170,15 +170,15 @@ public class StarGateClient extends Thread {
     }
 
     @Deprecated
-    public void setCustomHandler(SessionHandler<ClientSession> customHandler) {
+    public void setCustomHandler(SessionHandler<?> customHandler) {
         this.customHandlers.add(customHandler);
     }
 
-    public void addCustomHandler(SessionHandler<ClientSession> customHandler) {
+    public void addCustomHandler(SessionHandler<?> customHandler) {
         this.customHandlers.add(customHandler);
     }
 
-    public boolean removeCustomHandler(SessionHandler<ClientSession> customHandler) {
+    public boolean removeCustomHandler(SessionHandler<?> customHandler) {
         return this.customHandlers.remove(customHandler);
     }
 
@@ -186,7 +186,7 @@ public class StarGateClient extends Thread {
         this.customHandlers.clear();
     }
 
-    public List<SessionHandler<ClientSession>> getCustomHandlers() {
+    public List<SessionHandler<?>> getCustomHandlers() {
         return this.customHandlers;
     }
 
