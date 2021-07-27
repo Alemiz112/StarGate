@@ -54,7 +54,7 @@ public class StarGateServerListener extends alemiz.stargate.server.StarGateServe
         }
 
         if (this.loader.isCheckClientNames()){
-            ServerSession oldSession = this.loader.getSession(session.getClientName());
+            ServerSession oldSession = this.loader.getSession(session.getSessionName());
             if (oldSession != null && session != oldSession){
                 oldSession.disconnect(DisconnectPacket.REASON.ANOTHER_LOCATION_LOGIN);
             }

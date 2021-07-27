@@ -152,7 +152,7 @@ public class StarGateServer extends Thread {
 
     public ServerSession getSession(String clientName){
         for (ServerSession session : this.starGateSessionMap.values()){
-            if (session.getHandshakeData() != null && session.getClientName().equals(clientName)){
+            if (session.getHandshakeData() != null && session.getSessionName().equals(clientName)){
                 return session;
             }
         }

@@ -170,6 +170,8 @@ public abstract class StarGateSession {
         return this.logOutputLevel;
     }
 
+    public abstract String getSessionName();
+
     public Channel getChannel() {
         return this.channel;
     }

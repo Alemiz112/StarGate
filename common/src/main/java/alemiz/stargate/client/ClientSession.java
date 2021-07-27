@@ -151,4 +151,9 @@ public class ClientSession extends StarGateSession {
     public StarGateClient getClient() {
         return this.client;
     }
+
+    @Override
+    public String getSessionName() {
+        return this.client.getClientName();
+    }
 }

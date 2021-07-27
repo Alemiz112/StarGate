@@ -108,7 +108,7 @@ public class StarGateClient extends Thread {
         if (this.session.close()) {
             this.getLogger().warn("StarGate client " + this.getClientName() + " has been disconnected!");
         }
-        
+
         if (this.clientListener != null) {
             this.clientListener.onSessionDisconnected(this.session);
         }

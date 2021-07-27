@@ -112,7 +112,7 @@ public class ServerSession extends StarGateSession {
             if (error != null){
                 this.requestReconnect("Ping Timeout");
             }
-            this.getLogger().debug("Client "+this.getClientName()+" received ping "+(reply.getPongTime() - reply.getPingTime())+"ms!");
+            this.getLogger().debug("Client "+this.getSessionName()+" received ping "+(reply.getPongTime() - reply.getPingTime())+"ms!");
         });
     }
 
@@ -144,7 +144,7 @@ public class ServerSession extends StarGateSession {
     @Override
     public void onDisconnect(String reason) {
         if (this.isAuthenticated()){
-            this.getLogger().info("StarGate client "+this.getClientName()+" has disconnected! Reason: "+reason);
+            this.getLogger().info("StarGate client "+this.getSessionName()+" has disconnected! Reason: "+reason);
         }
         this.close();
     }
@@ -152,13 +152,13 @@ public class ServerSession extends StarGateSession {
     @Override
     public void disconnect(@NonNull String reason) {
         if (this.isAuthenticated()){
-            this.getLogger().info("Disconnecting client "+this.getClientName());
+            this.getLogger().info("Disconnecting client "+this.getSessionName());
         }
         super.disconnect(reason);
     }
 
     public void requestReconnect(@NonNull String reason){
-        this.getLogger().info("Requesting client reconnection from "+this.getClientName()+"! Reason: "+reason);
+        this.getLogger().info("Requesting client reconnection from "+this.getSessionName()+"! Reason: "+reason);
         ReconnectPacket packet = new ReconnectPacket();
         packet.setReason(reason);
         this.forcePacket(packet);
@@ -174,7 +174,13 @@ public class ServerSession extends StarGateSession {
         return this.server.getLogger();
     }
 
-    public String getClientName(){
+    @Deprecated
+    public String getClientName() {
+        return this.getSessionName();
+    }
+
+    @Override
+    public String getSessionName() {
         return this.handshakeData.getClientName();
     }
 
