@@ -19,8 +19,9 @@ import alemiz.stargate.StarGate;
 import alemiz.stargate.protocol.*;
 import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.handler.ConnectedHandler;
-import dev.waterdog.waterdogpe.network.ServerInfo;
-import dev.waterdog.waterdogpe.network.session.ServerConnection;
+import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
+import dev.waterdog.waterdogpe.network.serverinfo.ServerInfoType;
+import dev.waterdog.waterdogpe.network.session.DownstreamClient;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 public class PacketHandler extends ConnectedHandler {
@@ -90,9 +91,9 @@ public class PacketHandler extends ConnectedHandler {
         response.setResponseId(packet.getResponseId());
         response.setUpstreamPing(player.getPing());
 
-        ServerConnection server = player.getServer();
-        if (server != null && server.isConnected()) {
-            response.setDownstreamPing(server.getDownstream().getLatency());
+        DownstreamClient downstream = player.getDownstream();
+        if (downstream != null && downstream.isConnected()) {
+            response.setDownstreamPing(downstream.getSession().getLatency());
         }
         this.session.sendPacket(response);
         return true;
@@ -103,7 +104,10 @@ public class PacketHandler extends ConnectedHandler {
         if (packet.getAction() == ServerManagePacket.Action.REMOVE) {
             return this.loader.getProxy().removeServerInfo(packet.getServerName()) != null;
         }
-        ServerInfo serverInfo = new ServerInfo(packet.getServerName(), packet.getAddress(), packet.getPublicAddress());
+
+        ServerInfoType serverType = ServerInfoType.getOrBedrock(packet.getServerType());
+        ServerInfo serverInfo = this.loader.getProxy().getServerInfoMap().createServerInfo(
+                packet.getServerName(), packet.getAddress(), packet.getPublicAddress(), serverType);
         return this.loader.getProxy().registerServerInfo(serverInfo);
     }
 }
