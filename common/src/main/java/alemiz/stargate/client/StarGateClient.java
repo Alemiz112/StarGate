@@ -52,7 +52,7 @@ public class StarGateClient extends Thread {
     private final List<SessionHandler<?>> customHandlers = new ObjectArrayList<>();
 
     public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader) {
-        this(address, handshakeData, loader, new NioEventLoopGroup(0, new DefaultThreadFactory("stargate")));
+        this(address, handshakeData, loader, new NioEventLoopGroup(0, new DefaultThreadFactory("stargate", true)));
     }
 
     public StarGateClient(InetSocketAddress address, HandshakeData handshakeData, ServerLoader loader, EventLoopGroup eventLoopGroup) {

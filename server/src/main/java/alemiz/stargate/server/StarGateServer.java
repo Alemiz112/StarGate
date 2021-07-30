@@ -58,7 +58,7 @@ public class StarGateServer extends Thread {
         this.protocolCodec = new ProtocolCodec();
         this.password = password;
 
-        DefaultThreadFactory factory = new DefaultThreadFactory("stargate");
+        DefaultThreadFactory factory = new DefaultThreadFactory("stargate", true);
         this.bossLoopGroup = new NioEventLoopGroup(0, factory);
         this.eventLoopGroup = new NioEventLoopGroup(0, factory);
     }
