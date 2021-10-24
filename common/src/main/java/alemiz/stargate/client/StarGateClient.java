@@ -37,7 +37,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class StarGateClient extends Thread {
+public class StarGateClient {
 
     private final ServerLoader loader;
     private final InetSocketAddress address;
@@ -61,31 +61,35 @@ public class StarGateClient extends Thread {
         this.handshakeData = handshakeData;
         this.protocolCodec = new ProtocolCodec();
         this.eventLoopGroup = eventLoopGroup;
-        this.setName("StarGate Client #"+handshakeData.getClientName());
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
-    @Override
-    public void run() {
+    @Deprecated
+    public void start() {
         this.connect();
     }
 
-    public void connect() {
+    public ChannelFuture connect() {
         if (this.isConnected()){
-            return;
+            return this.session.getChannel().voidPromise();
         }
 
-        this.getLogger().debug("Connecting to StarGate server "+this.address);
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(this.eventLoopGroup);
-            bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-            bootstrap.handler(new ClientSessionInitializer(this));
-            bootstrap.connect(this.address).get();
-        } catch (Exception e) {
-            this.getLogger().error("Can not connect to StarGate server!", e);
-        }
+        this.getLogger().debug("Connecting to StarGate server " + this.address);
+
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(this.eventLoopGroup);
+        bootstrap.channel(NioSocketChannel.class);
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        bootstrap.handler(new ClientSessionInitializer(this));
+
+
+        ChannelFuture future = bootstrap.connect(this.address);
+        future.addListener(f -> {
+            if (f.cause() != null) {
+                this.getLogger().error("Can not connect to StarGate server!", f.cause());
+            }
+        });
+        return future;
     }
 
     public void onConnect(InetSocketAddress address, ChannelHandlerContext ctx) {
@@ -112,6 +116,7 @@ public class StarGateClient extends Thread {
         if (this.clientListener != null) {
             this.clientListener.onSessionDisconnected(this.session);
         }
+        this.session = null;
     }
 
     public void sendPacket(StarGatePacket packet){
@@ -155,10 +160,6 @@ public class StarGateClient extends Thread {
 
     public ProtocolCodec getProtocolCodec() {
         return this.protocolCodec;
-    }
-
-    protected void setSession(ClientSession session) {
-        this.session = session;
     }
 
     public ClientSession getSession() {

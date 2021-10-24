@@ -72,8 +72,14 @@ public class PacketHandler extends ConnectedHandler {
     @Override
     public boolean handleServerTransfer(ServerTransferPacket packet) {
         ProxiedPlayer player = this.loader.getProxy().getPlayer(packet.getPlayerName());
+        if (player == null) {
+            this.loader.getLogger().debug("Can not find player " + packet.getPlayerName());
+            return false;
+        }
+
         ServerInfo serverInfo = this.loader.getProxy().getServerInfo(packet.getTargetServer());
-        if (player == null || serverInfo == null){
+        if (serverInfo == null) {
+            this.loader.getLogger().debug("Can not find ServerInfo " + packet.getTargetServer());
             return false;
         }
         player.connect(serverInfo);
