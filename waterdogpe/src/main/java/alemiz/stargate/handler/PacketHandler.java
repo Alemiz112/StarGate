@@ -94,6 +94,7 @@ public class PacketHandler extends ConnectedHandler {
         }
 
         PlayerPingResponsePacket response = new PlayerPingResponsePacket();
+        response.setPlayerName(player.getName());
         response.setResponseId(packet.getResponseId());
         response.setUpstreamPing(player.getPing());
 
