@@ -39,7 +39,7 @@ public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
         if (!buffer.isReadable(6)) { // MAGIC + LENGTH
             return;
         }
@@ -72,21 +72,27 @@ public class PacketDeEncoder extends ByteToMessageCodec<StarGatePacket> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, StarGatePacket packet, ByteBuf buffer) throws Exception {
-        buffer.writeShort(ProtocolCodec.STARGATE_MAGIC);
+    protected void encode(ChannelHandlerContext ctx, StarGatePacket packet, ByteBuf buffer) {
+        try {
+            buffer.writeShort(ProtocolCodec.STARGATE_MAGIC);
 
-        // Reserve 4 bytes for encoded length
-        int index = buffer.writerIndex();
-        buffer.writeZero(4);
+            // Reserve 4 bytes for encoded length
+            int index = buffer.writerIndex();
+            buffer.writeZero(4);
 
-        this.protocolCodec.tryEncode(buffer, packet);
+            this.protocolCodec.tryEncode(buffer, packet);
 
-        // Revert back to the beginning
-        int finalIndex = buffer.writerIndex();
-        buffer.writerIndex(index);
+            // Revert back to the beginning
+            int finalIndex = buffer.writerIndex();
+            buffer.writerIndex(index);
 
-        // Write encoded length and restore index
-        buffer.writeInt(finalIndex - index - 4);
-        buffer.writerIndex(finalIndex);
+            // Write encoded length and restore index
+            buffer.writeInt(finalIndex - index - 4);
+            buffer.writerIndex(finalIndex);
+        } catch (Exception e) {
+            this.logger.error("Can not encode " + packet.getClass().getSimpleName(), e);
+            buffer.clear(); // Do not send anything
+            throw e;
+        }
     }
 }

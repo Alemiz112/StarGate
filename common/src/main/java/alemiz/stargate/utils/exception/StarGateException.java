@@ -15,7 +15,7 @@
 
 package alemiz.stargate.utils.exception;
 
-public class StarGateException extends Exception{
+public class StarGateException extends RuntimeException {
 
     public StarGateException(String message){
         super(message);

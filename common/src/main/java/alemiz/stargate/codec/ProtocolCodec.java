@@ -61,7 +61,7 @@ public class ProtocolCodec {
         }
     }
 
-    public void tryEncode(ByteBuf buffer, StarGatePacket packet) throws Exception {
+    public void tryEncode(ByteBuf buffer, StarGatePacket packet) {
         if (!buffer.isWritable()) {
             throw new IllegalStateException("Buffer is not writable!");
         }
@@ -77,7 +77,7 @@ public class ProtocolCodec {
         packet.encodePayload(buffer);
     }
 
-    public StarGatePacket tryDecode(ByteBuf buffer) throws Exception {
+    public StarGatePacket tryDecode(ByteBuf buffer) {
         if (!buffer.isReadable()) {
             return null;
         }
