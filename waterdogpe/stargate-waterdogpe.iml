@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="server" />
+    <orderEntry type="module" module-name="common" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.43.Final" level="project" />
+    <orderEntry type="library" name="Maven: it.unimi.dsi:fastutil:8.4.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:30.1.1-jre" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: dev.waterdog.waterdogpe:waterdog:1.1.10-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.cubespace:Yamler-Core:2.4.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: jline:jline:2.13" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.fusesource.jansi:jansi:1.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-api:2.17.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-core:2.17.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.lmax:disruptor:3.4.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jline:jline-terminal:3.9.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jline:jline-terminal-jna:3.9.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.java.dev.jna:jna:4.2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jline:jline-reader:3.9.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.minecrell:terminalconsoleappender:1.2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v544:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v534:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v527:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v503:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v486:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v475:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v471:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v465:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v448:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v440:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v431:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v428:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v422:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v419:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v408:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v407:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v390:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v389:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v388:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v361:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v354:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v340:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v332:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v313:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-v291:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:bedrock-common:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.protocol:common:2.9.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx:natives:1.0.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx:nbt:2.2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx:math:1.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-int-sets:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-int-common:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-object-int-maps:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-int-int-maps:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nimbusds:nimbus-jose-jwt:9.13" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-long-common:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-common:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-long-object-maps:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-long-sets:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-object-sets:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.fastutil:fastutil-object-common:8.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.lanternpowered:lmbda:2.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx:common:1.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx:common-api:1.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: ch.jalu:injector:0.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.11.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm:5.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.network:common:1.6.28-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.70.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-native-unix-common:4.1.70.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-classes-epoll:4.1.70.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-native-kqueue:osx-x86_64:4.1.70.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-classes-kqueue:4.1.70.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nukkitx.network:raknet:1.6.28-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.jodah:expiringmap:0.5.9" level="project" />
+  </component>
+</module>
