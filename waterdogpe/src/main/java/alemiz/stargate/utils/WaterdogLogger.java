@@ -51,12 +51,12 @@ public class WaterdogLogger implements StarGateLogger {
 
     @Override
     public void warn(String message) {
-        this.loader.getLogger().warning("§e"+message);
+        this.loader.getLogger().warn("§e"+message);
     }
 
     @Override
     public void error(String message) {
-        this.loader.getLogger().warning("§c"+message);
+        this.loader.getLogger().error("§c"+message);
     }
 
     @Override
@@ -70,6 +70,6 @@ public class WaterdogLogger implements StarGateLogger {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         e.printStackTrace(printWriter);
-        this.loader.getLogger().warning(stringWriter.toString());
+        this.loader.getLogger().warn(stringWriter.toString());
     }
 }
