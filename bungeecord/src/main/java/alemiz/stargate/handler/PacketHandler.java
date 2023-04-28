@@ -50,7 +50,7 @@ public class PacketHandler extends ConnectedHandler {
                 response.getPlayerList().add(player.getName());
             }
 
-            for (ServerInfo serverInfo : this.loader.getProxy().getServersCopy().values()){
+            for (ServerInfo serverInfo : this.loader.getProxy().getServers().values()){
                 response.getServerList().add(serverInfo.getName());
             }
             this.session.sendPacket(response);
@@ -115,9 +115,7 @@ public class PacketHandler extends ConnectedHandler {
                 packet.getServerName(),
                 packet.getAddress(),
                 "",
-                false,
-                packet.getServerType().equals("bedrock"),
-                "default"
+                false
         );
         this.loader.getProxy().getServers().put(packet.getServerName(), serverInfo);
         return true;
