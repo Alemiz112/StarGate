@@ -12,7 +12,7 @@
     <modules>
         <module>server</module>
         <module>common</module>
-        <module>bungeecord</module>
+        <!--<module>bungeecord</module>-->
         <module>waterdogpe</module>
     </modules>
 
