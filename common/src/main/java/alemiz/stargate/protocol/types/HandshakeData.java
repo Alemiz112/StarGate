@@ -65,8 +65,8 @@ public class HandshakeData {
     }
 
     public enum SOFTWARE {
-        POCKETMINE,
-        PMMP4,
+        POCKETMINE_LEGACY,
+        PMMP,
         NUKKIT,
         CLOUDBURST,
         WATERDOG,
