@@ -33,4 +33,4 @@ StarGate:
   maxConnections: 50   
 ```  
 ## 📋 Special Thanks To:
-Everyone who downloaded this plugin. To persons who inspiraded me to start this plugin. Thanks to You, this project will be updated for a long time
+Everyone who downloaded this plugin. To persons who inspired me to start this plugin. Thanks to You, this project will be updated for a long time
