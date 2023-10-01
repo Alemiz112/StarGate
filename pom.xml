@@ -20,7 +20,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netty.version>4.1.43.Final</netty.version>
+        <netty.version>4.1.96.Final</netty.version>
         <fastutil.version>8.4.2</fastutil.version>
     </properties>
 
@@ -28,12 +28,12 @@
         <repository>
             <id>central</id>
             <name>waterdog-releases</name>
-            <url>http://repo.waterdog.dev/artifactory/releases</url>
+            <url>https://repo.waterdog.dev/releases</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>waterdog-snapshots</name>
-            <url>http://repo.waterdog.dev/artifactory/snapshots</url>
+            <url>https://repo.waterdog.dev/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
