@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and Deploy
         if: ${{ github.ref == 'refs/heads/master' }}
-        run: mvn -B clean package
+        run: mvn -B clean package deploy
         shell: bash
 
       - name: Upload artifacts

@@ -26,12 +26,12 @@
 
     <distributionManagement>
         <repository>
-            <id>central</id>
+            <id>waterdog-releases</id>
             <name>waterdog-releases</name>
             <url>https://repo.waterdog.dev/releases</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
+            <id>waterdog-snapshots</id>
             <name>waterdog-snapshots</name>
             <url>https://repo.waterdog.dev/snapshots</url>
         </snapshotRepository>
